@@ -52,6 +52,7 @@ include_directories(${OL_INCLUDE_DIRECTORIES})
 # Add files here to compile them
 add_library(ol SHARED src/Visualizer.cpp
                         src/Test.cpp 
+                        src/Dataset.cpp
                   )
 
 set_target_properties(ol PROPERTIES OUTPUT_NAME ol)
