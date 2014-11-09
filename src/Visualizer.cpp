@@ -19,7 +19,10 @@ void Visualizer::visualize(std::vector<pcl::PointXYZ> points, std::vector<Label>
         pointRGB.x = points[i].x;
         pointRGB.y = points[i].y;            
         pointRGB.z = points[i].z;
-        pointRGB.rgb = getLabelColour(labels[i]);
+        auto rgb = getLabelColor(labels[i]);
+        pointRGB.r = std::get<0>(rgb);
+        pointRGB.g = std::get<1>(rgb);
+        pointRGB.b = std::get<2>(rgb);
         cloud->push_back(pointRGB);
     }
 
@@ -36,11 +39,11 @@ void Visualizer::visualize(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud)
     viewer.setCameraPosition(180,180,0,0,0,1);
 
     while (!viewer.wasStopped()) {
-        viewer.spinOnce();
+        viewer.spinOnce(100);
     }     
 }
 
-uint32_t Visualizer::getLabelColour(Label label)
+std::tuple<uint8_t, uint8_t, uint8_t> Visualizer::getLabelColor(Label label)
 {
     uint8_t r, g, b;
     switch (label) {
@@ -62,6 +65,7 @@ uint32_t Visualizer::getLabelColour(Label label)
     default:
         throw std::invalid_argument("Invalid label");
     }
-    uint32_t rgb = ((uint32_t)r << 16 | (uint32_t)g << 8 | (uint32_t)b);
-    return rgb;
+    // uint32_t rgb = ((uint32_t)r << 16 | (uint32_t)g << 8 | (uint32_t)b);
+    // return rgb;
+    return std::make_tuple(r, g, b);
 }

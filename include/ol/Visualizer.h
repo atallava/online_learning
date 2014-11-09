@@ -12,6 +12,6 @@ namespace ol {
         void visualize(std::string file_name);
         void visualize(std::vector<pcl::PointXYZ> points, std::vector<Label> labels);
         void visualize(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
-        uint32_t getLabelColour(Label label);
+        std::tuple<uint8_t, uint8_t, uint8_t> getLabelColor(Label label);
     };
 }
