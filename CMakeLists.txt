@@ -28,6 +28,9 @@ add_definitions( -Wall -std=c++0x )
 find_package( PCL 1.3 REQUIRED )
 include_directories( ${PCL_INCLUDE_DIRS} )
 link_directories( ${PCL_LIBRARY_DIRS} )
+add_definitions(${PCL_DEFINITIONS})
+list( APPEND OL_LIBRARIES ${PCL_LIBRARIES})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 
 # Eigen for linear algebra and matrices
 find_package( Eigen REQUIRED )
@@ -46,16 +49,18 @@ list( APPEND OL_LIBRARIES "-lboost_thread" ) # Need to force linking against thr
 set( OL_INCLUDE_DIRECTORIES "${PROJECT_SOURCE_DIR}/include" )
 include_directories(${OL_INCLUDE_DIRECTORIES})
 
-#set_target_properties(ol PROPERTIES OUTPUT_NAME ol)
+# Add files here to compile them
+add_library(ol SHARED src/Visualizer.cpp
+                        src/Test.cpp 
+                  )
 
-#target_link_libraries(ol ${OL_LIBRARIES})
+set_target_properties(ol PROPERTIES OUTPUT_NAME ol)
+
+target_link_libraries(ol ${OL_LIBRARIES})
 
 # Add files here to make executables out of them
-#add_executable(test src/run_tests.cpp)
-#target_link_libraries(test ol ${OL_LIBRARIES})
-
-#add_executable(run_filter src/run_filter.cpp)
-#target_link_libraries(run_filter ol ${OL_LIBRARIES})
+add_executable(run_tests src/run_tests.cpp)
+target_link_libraries(run_tests ol ${OL_LIBRARIES})
 
 # add_subdirectory( src )
 
