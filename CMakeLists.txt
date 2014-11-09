@@ -50,10 +50,10 @@ set( OL_INCLUDE_DIRECTORIES "${PROJECT_SOURCE_DIR}/include" )
 include_directories(${OL_INCLUDE_DIRECTORIES})
 
 # Add files here to compile them
-add_library(ol SHARED src/Visualizer.cpp
+add_library(ol SHARED 	src/Dataset.cpp
+						src/Visualizer.cpp
                         src/Test.cpp 
-                        src/Dataset.cpp
-                  )
+                  	)
 
 set_target_properties(ol PROPERTIES OUTPUT_NAME ol)
 

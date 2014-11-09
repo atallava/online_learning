@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include <ol/Dataset.h>
+#include <stdexcept>
 
 using namespace ol;
 
@@ -50,27 +51,26 @@ Label Dataset::mapRawLabelToLabel(int raw_label)
     switch (raw_label) {
     case 1004:
         // veg
-        label = 0;
+        label = Label::VEG;
         break;
     case 1100:
         // wire
-        label = 1;
+        label = Label::WIRE;
         break;
     case 1103:
         // pole
-        label = 2;
+        label = Label::POLE;
         break;
     case 1200:
         // ground
-        label = 3;
+        label = Label::GROUND;
         break;
     case 1400:
         // facade
-        label = 4;
+        label = Label::FACADE;
         break;
     default:
-        printf("here!\n");
-        label = -1;
+        throw std::runtime_error("bad raw label!\n");
     }
     return label;
 }

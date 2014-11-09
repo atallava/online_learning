@@ -1,11 +1,11 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <ol/Constants.h>
 #include <pcl/point_types.h>
 
 namespace ol {
     typedef std::vector<double> FeatureVec;
-    typedef int Label;
 
     class Dataset {
     public:
