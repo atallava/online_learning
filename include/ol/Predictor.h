@@ -6,8 +6,9 @@
 namespace ol {
     class Predictor {
     public:
-        virtual int predict(FeatureVec feature_vec) = 0;
-        virtual void pushData(FeatureVec feature_vec,  int label) = 0;
+        virtual int predict(const FeatureVec& feature_vec) = 0;
+        virtual void pushData(const FeatureVec& feature_vec,  int label) = 0;
+        static std::pair<int,int> getBinaryLabels();
     };
 }
 

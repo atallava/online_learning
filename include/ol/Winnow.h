@@ -14,4 +14,3 @@ namespace ol {
         std::vector<double> weights_;
   };
 }
-
