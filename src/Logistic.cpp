@@ -6,7 +6,7 @@ using namespace ol;
 
 Logistic::Logistic(int num_rounds)
     :   num_rounds_(num_rounds),
-        weights_(NUM_FEATURES, 1/NUM_FEATURES),
+        weights_(NUM_FEATURES, 1.0/static_cast<double>(NUM_FEATURES)),
         current_iteration_(0)
 {}
 

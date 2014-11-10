@@ -4,21 +4,21 @@
 #include <numeric>
 
 #include <ol/ExpGradDescent.h>
+#include <ol/Constants.h>
 
 using namespace ol;
 
-ExpGradDescent::ExpGradDescent(int num_rounds) 
+ExpGradDescent::ExpGradDescent(int num_rounds)
 {
-    weights_ = std::vector<double>(NUM_FEATURES, 1/NUM_FEATURES);
+    weights_ = std::vector<double>(NUM_FEATURES, 1/static_cast<double>(NUM_FEATURES));
     double G_ = 1;
     learning_rate_ = sqrt(std::log(NUM_FEATURES)/num_rounds)/G_;
 }
 
 int ExpGradDescent::predict(const FeatureVec& feature_vec, double& confidence) 
 {
-    int label;
     confidence = std::inner_product(feature_vec.begin(), feature_vec.end(),
-        weights_.begin(), 0.0);
+				    weights_.begin(), 0.0);
     return (confidence > 0) ? 1 : -1;
 }
 
@@ -27,7 +27,8 @@ void ExpGradDescent::pushData(const FeatureVec& feature_vec,  int label)
     // hinge part : if predicted label is fine, don't update
     double confidence;
     int predicted_label = predict(feature_vec, confidence);
-    if (confidence >= 1)
+    // TODO: negative weights have to be allowed
+    if (label*confidence >= 1)
         return;
 
     else {

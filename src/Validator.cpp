@@ -17,10 +17,9 @@ double Validator::validateOnDataset(std::string file_name, std::string predictor
     double accuracy = 0.0;
     Label predicted_label;
     for (size_t i = 0; i < num_test_ && i < feature_vecs.size(); ++i) {
-        predicted_label = static_cast<Label>(ova.predict(feature_vecs
-            [num_train_+i]));
+        predicted_label = ova.predict(feature_vecs[num_train_+i]);
         // printf("actual : %d, predicted_label : %d\n", labels[num_train_+i],
-        //                                                 predicted_label);
+        //                                                  predicted_label);
         if (predicted_label == labels[num_train_+i])
             accuracy = accuracy+1;
     }

@@ -32,6 +32,7 @@ bool Test::validatePredictor(std::string file_name, std::string predictor_type)
 {
     Validator v;
     double accuracy = v.validateOnDataset(file_name, predictor_type);
+    std::cout << predictor_type << std::endl;
     printf("Accuracy = %0.2f\n", accuracy);
     return true;
 }
