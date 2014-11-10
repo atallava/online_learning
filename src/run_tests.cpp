@@ -1,3 +1,4 @@
+#include <string>
 #include <ol/Test.h>
 
 using namespace ol;
@@ -7,6 +8,9 @@ int main() {
     //t.testVizPCD("data/am.pcd");
     //t.testDataset("data/oakland_part3_am_rf.node_features");
     //t.testVizPoints();
-    //t.validatePredictor("data/oakland_part3_am_rf.node_features","logistic");
-    t.validatePredictor("data/oakland_part3_am_rf.node_features","expgraddescent");
+
+    std::string train_file_name ("data/oakland_part3_am_rf.node_features");
+    std::string test_file_name ("data/oakland_part3_an_rf.node_features");
+    //t.validatePredictor(train_file_name, test_file_name, "logistic"); 
+    t.validatePredictor(train_file_name, test_file_name, "expgraddescent");
 }
