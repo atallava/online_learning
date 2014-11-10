@@ -18,3 +18,17 @@ OneVsAll::OneVsAll(int num_rounds, std::string type)
     }
 }
 
+void pushData(const FeatureVec& feature_vec, Label label)
+{
+    for(int i = 0; i < NUM_CLASSES; i++) {
+        int y = (static_cast<int>(label) == i) ?
+                            binary_labels_.second:binary_labels_.first;
+        binary_predictors_[i].pushData(feature_vec, y);
+    }
+}
+
+
+int OneVsAll::predict(const FeatureVec& feature_vec)
+{
+
+}
