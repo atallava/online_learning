@@ -6,5 +6,7 @@ int main() {
     Test t = Test();
     //t.testVizPCD("data/am.pcd");
     //t.testDataset("data/oakland_part3_am_rf.node_features");
-    t.testVizPoints();
+    //t.testVizPoints();
+    t.validatePredictor("data/oakland_part3_am_rf.node_features","expgraddescent");
+    t.validatePredictor("data/oakland_part3_am_rf.node_features","logistic");
 }

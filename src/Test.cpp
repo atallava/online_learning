@@ -26,3 +26,10 @@ bool Test::testDataset(std::string file_name)
     Dataset d(file_name);
     return true;
 }
+
+bool Test::validatePredictor(std::string file_name, std::string predictor_type)
+{
+    Validator v;
+    double accuracy = v.validateOnDataset(file_name, algo);
+    printf("Accuracy = %0.2f\n", accuracy);
+}

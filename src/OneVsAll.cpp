@@ -14,7 +14,7 @@ OneVsAll::OneVsAll(int num_rounds, std::string type)
         binary_predictors_.resize(NUM_CLASSES, ExpGradDescent(num_rounds));
         binary_labels_ = ExpGradDescent::getBinaryLabels();
     } else {
-        throw std::runtime_error("Can't find this predictor : %s", type.c_str());
+        throw std::runtime_error("Can't find predictor");
     }
 }
 

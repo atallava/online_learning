@@ -7,13 +7,14 @@
 
 using namespace ol;
 
-ExpGradDescent::ExpGradDescent(int num_features, int num_rounds) : weights_(num_features,1) 
+ExpGradDescent::ExpGradDescent(int num_rounds) 
 {
+    weights_ = std::vector<double>(NUM_FEATURES, 1/NUM_FEATURES);
     double G_ = 1;
-    learning_rate_ = sqrt(std::log(num_features)/num_rounds)/G_;
+    learning_rate_ = sqrt(std::log(NUM_FEATURES)/num_rounds)/G_;
 }
 
-int ExpGradDescent::predict(FeatureVec feature_vec) 
+int ExpGradDescent::predict(const FeatureVec& feature_vec) 
 {
     int label;
     double val = std::inner_product(feature_vec.begin(), feature_vec.end(), weights_.begin(), 0.0);
@@ -24,7 +25,7 @@ int ExpGradDescent::predict(FeatureVec feature_vec)
     return label;
 }
 
-void ExpGradDescent::pushData(FeatureVec feature_vec,  int label) 
+void ExpGradDescent::pushData(const FeatureVec& feature_vec,  int label) 
 {
     int predicted_label = predict(feature_vec);
     if (predicted_label == label)

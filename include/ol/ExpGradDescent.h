@@ -6,9 +6,10 @@
 namespace ol {
   class ExpGradDescent : public Predictor {
   public:
-        ExpGradDescent(int num_features, int num_rounds);
-        int predict(FeatureVec feature_vec);
-        void pushData(FeatureVec feature_vec,  int label);
+        ExpGradDescent(int num_rounds);
+        int predict(const FeatureVec& feature_vec);
+        void pushData(const FeatureVec& feature_vec,  int label);
+        static std::pair<int,int> getBinaryLabels() { return std::pair<int,int> (-1,1) ; }
     private:
         void updateWeights();
         double threshold_;
