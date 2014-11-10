@@ -1,11 +1,13 @@
 #pragma once
 #include <vector>
 
+#include <ol/Dataset.h>
+
 namespace ol {
     class Predictor {
     public:
-        virtual int predict(std::vector<double> features) = 0;
-        virtual pushData(std::vector<double> features,  int label) = 0;
+        virtual int predict(FeatureVec feature_vec) = 0;
+        virtual void pushData(FeatureVec feature_vec,  int label) = 0;
     };
 }
 
