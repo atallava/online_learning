@@ -106,7 +106,7 @@ double Validator::validate(std::vector<FeatureVec> train_feature_vecs, std::vect
 	    std::cout << "\n\n";
 	}
 
-	printf("Overall accuracy: %.2f\n", accuracy);
+	printf("Overall accuracy: %.2f\n\n", accuracy);
     }
     return accuracy;
 }

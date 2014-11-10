@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <limits>
 
 #include <ol/OneVsAll.h>
 
@@ -33,7 +34,8 @@ void OneVsAll::pushData(const FeatureVec& feature_vec, Label label)
 Label OneVsAll::predict(const FeatureVec& feature_vec)
 {
     int max_idx = -1;
-    double max_confidence = 0.0;
+    double max_confidence = static_cast<double>(std::numeric_limits<int>::min());
+    
     for (int i = 0; i < NUM_CLASSES; i++) {
         double this_confidence = 0.0;
         int predicted_y = binary_predictors_[i]->predict(feature_vec, this_confidence);
