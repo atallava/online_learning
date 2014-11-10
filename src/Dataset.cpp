@@ -43,6 +43,8 @@ Dataset::Dataset(std::string file_name)
         }
         feature_vecs_.push_back(features);
     }
+    printf("(Dataset summary)\n");
+    printf("\tRead in %d points\n", feature_vecs_.size());
 }
 
 Label Dataset::mapRawLabelToLabel(int raw_label) 
