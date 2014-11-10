@@ -56,6 +56,8 @@ add_library(ol SHARED 	src/Dataset.cpp
                         src/ExpGradDescent.cpp
                         src/Logistic.cpp
 
+                        src/OneVsAll.cpp
+
                         src/Test.cpp 
                   	)
 

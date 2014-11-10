@@ -12,12 +12,14 @@ namespace ol {
      * resource : http://people.cs.pitt.edu/~milos/courses/cs2710/lectures/Class22.pdf
      */
     class Logistic : public Predictor {
+    public:
         // uniform prior for the weights
-        Logistic();
+        Logistic(int num_rounds);
         int predict(const FeatureVec& feature_vec);
         void pushData(const FeatureVec& feature_vec,  int label);
         static std::pair<int,int> getBinaryLabels();
     private:
+        int num_rounds_;
         std::vector<double> weights_;
         double learning_rate_;
         int current_iteration_;

@@ -4,8 +4,9 @@
 
 using namespace ol;
 
-Logistic::Logistic()
-    :   weights_(NUM_FEATURES, 1/NUM_FEATURES),
+Logistic::Logistic(int num_rounds)
+    :   num_rounds_(num_rounds),
+        weights_(NUM_FEATURES, 1/NUM_FEATURES),
         current_iteration_(0)
 {}
 
