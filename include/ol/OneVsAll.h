@@ -11,8 +11,8 @@
 namespace ol {
     class OneVsAll {
         OneVsAll(int num_rounds, std::string type);
-        int predict(FeatureVec feature_vec);
-        void pushData(FeatureVec feature_vec,  int label);
+        int predict(const FeatureVec& feature_vec);
+        void pushData(const FeatureVec& feature_vec, Label label);
     private:
         std::vector<Predictor> binary_predictors_;
         std::pair<int,int> binary_labels_;
