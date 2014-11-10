@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
 #include <ol/Constants.h>
 #include <ol/Predictor.h>
@@ -10,11 +11,12 @@
 
 namespace ol {
     class OneVsAll {
+    public:
         OneVsAll(int num_rounds, std::string type);
-        int predict(const FeatureVec& feature_vec);
+        Label predict(const FeatureVec& feature_vec);
         void pushData(const FeatureVec& feature_vec, Label label);
     private:
-        std::vector<Predictor> binary_predictors_;
+        std::vector< std::shared_ptr<Predictor> > binary_predictors_;
         std::pair<int,int> binary_labels_;
     };
 }

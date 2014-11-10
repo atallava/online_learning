@@ -30,11 +30,11 @@ void Logistic::pushData(const FeatureVec& features, int label)
     }
 }
 
-int Logistic::predict(const FeatureVec& features)
+int Logistic::predict(const FeatureVec& features, double& confidence)
 {
     double w_t_x = std::inner_product(weights_.begin(), weights_.end(),
         features.begin(), 0);
     // get the probability
-    double prob = sigmoid(w_t_x);
-    return static_cast<int>(prob > 0.5);
+    confidence = sigmoid(w_t_x);
+    return static_cast<int>(confidence > 0.5);
 }

@@ -1,6 +1,7 @@
 #include <ol/Test.h>
 
 #include <ol/Visualizer.h>
+#include <ol/Validator.h>
 #include <ol/Dataset.h>
 
 using namespace ol;
@@ -30,6 +31,7 @@ bool Test::testDataset(std::string file_name)
 bool Test::validatePredictor(std::string file_name, std::string predictor_type)
 {
     Validator v;
-    double accuracy = v.validateOnDataset(file_name, algo);
+    double accuracy = v.validateOnDataset(file_name, predictor_type);
     printf("Accuracy = %0.2f\n", accuracy);
+    return true;
 }

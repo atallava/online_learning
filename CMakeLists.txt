@@ -58,6 +58,7 @@ add_library(ol SHARED 	src/Dataset.cpp
 
                         src/OneVsAll.cpp
 
+                        src/Validator.cpp
                         src/Test.cpp 
                   	)
 

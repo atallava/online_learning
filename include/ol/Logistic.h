@@ -15,7 +15,7 @@ namespace ol {
     public:
         // uniform prior for the weights
         Logistic(int num_rounds);
-        int predict(const FeatureVec& feature_vec);
+        int predict(const FeatureVec& feature_vec, double& confidence);
         void pushData(const FeatureVec& feature_vec,  int label);
         static std::pair<int,int> getBinaryLabels();
     private:

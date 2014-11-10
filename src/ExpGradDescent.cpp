@@ -14,22 +14,22 @@ ExpGradDescent::ExpGradDescent(int num_rounds)
     learning_rate_ = sqrt(std::log(NUM_FEATURES)/num_rounds)/G_;
 }
 
-int ExpGradDescent::predict(const FeatureVec& feature_vec) 
+int ExpGradDescent::predict(const FeatureVec& feature_vec, double& confidence) 
 {
     int label;
-    double val = std::inner_product(feature_vec.begin(), feature_vec.end(), weights_.begin(), 0.0);
-    if (val > 0)
-        label = 1;
-    else
-        label = -1;
-    return label;
+    confidence = std::inner_product(feature_vec.begin(), feature_vec.end(),
+        weights_.begin(), 0.0);
+    return (confidence > 0) ? 1 : -1;
 }
 
 void ExpGradDescent::pushData(const FeatureVec& feature_vec,  int label) 
 {
-    int predicted_label = predict(feature_vec);
-    if (predicted_label == label)
+    // hinge part : if predicted label is fine, don't update
+    double confidence;
+    int predicted_label = predict(feature_vec, confidence);
+    if (confidence >= 1)
         return;
+
     else {
         double z = 0;
         for (size_t i = 0; i < weights_.size(); ++i) {
