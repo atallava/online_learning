@@ -1,4 +1,5 @@
 #include <math.h>
+#include <iomanip>
 #include <algorithm>
 #include <functional>
 #include <numeric>
@@ -8,18 +9,23 @@
 
 using namespace ol;
 
-ExpGradDescent::ExpGradDescent(int num_rounds)
+ExpGradDescent::ExpGradDescent(int num_rounds) : U_(15),
+						 G_(1)
 {
-    weights_ = std::vector<double>(NUM_FEATURES, 1/static_cast<double>(NUM_FEATURES));
-    double G_ = 1;
+    weights_plus_ = std::vector<double>(NUM_FEATURES, 0.5*U_/static_cast<double>(NUM_FEATURES));
+    weights_minus_ = std::vector<double>(NUM_FEATURES, 0.5*U_/static_cast<double>(NUM_FEATURES));
     learning_rate_ = sqrt(std::log(NUM_FEATURES)/num_rounds)/G_;
 }
 
 int ExpGradDescent::predict(const FeatureVec& feature_vec, double& confidence) 
 {
-    confidence = std::inner_product(feature_vec.begin(), feature_vec.end(),
-				    weights_.begin(), 0.0);
+    double confidence_plus = std::inner_product(feature_vec.begin(), feature_vec.end(),
+						weights_plus_.begin(), 0.0);
+    double confidence_minus = 	std::inner_product(feature_vec.begin(), feature_vec.end(),
+						   weights_minus_.begin(), 0.0);
+    confidence = confidence_plus-confidence_minus;
     return (confidence > 0) ? 1 : -1;
+    printWeights();
 }
 
 void ExpGradDescent::pushData(const FeatureVec& feature_vec,  int label) 
@@ -31,29 +37,32 @@ void ExpGradDescent::pushData(const FeatureVec& feature_vec,  int label)
         return;
     }
 
-    // Hacked-up solution for negative weights
     else {
-        for (size_t i = 0; i < weights_.size(); ++i) {
-	    int sign_weight = (weights_[i] > 0) ? 1 : -1;
+        for (size_t i = 0; i < weights_plus_.size(); ++i) {
 	    double grad = -label*feature_vec[i];
-	    double arg = -sign_weight*learning_rate_*grad;
 	    
-	    double dummy_weight = weights_[i]-learning_rate_*grad;
-	    int sign_dummy = (dummy_weight > 0) ? 1 : -1;
-
-            weights_[i] = weights_[i]*exp(arg);
-	    
-	    if (sign_dummy != sign_weight) 
-		weights_[i] = -weights_[i];
+            weights_plus_[i] = weights_plus_[i]*exp(-learning_rate_*grad);
+	    weights_minus_[i] = weights_minus_[i]*exp(learning_rate_*grad);
         }
-
-	double norm = 0;
-	for (size_t i = 0; i < weights_.size(); ++i)
-	    norm += weights_[i]*weights_[i];
-	norm = sqrt(norm);
-	if (norm > 1)
-	    std::transform(weights_.begin(), weights_.end(), weights_.begin(),
-			   std::bind1st(std::multiplies<double>(),1/norm));
+	
+	double weights_sum = 0;
+	for (size_t i = 0; i < weights_plus_.size(); ++i)
+	    weights_sum += weights_plus_[i]+weights_minus_[i];
+	
+	// normalize weights
+	std::transform(weights_plus_.begin(), weights_plus_.end(), weights_plus_.begin(),
+			   std::bind1st(std::multiplies<double>(),U_/weights_sum));
+	std::transform(weights_minus_.begin(), weights_minus_.end(), weights_minus_.begin(),
+		       std::bind1st(std::multiplies<double>(),U_/weights_sum));
     }
 }
 
+void ExpGradDescent::printWeights() {
+    std::cout << "Positive weights: " << std::endl;
+    for (size_t i = 0; i < weights_plus_.size(); ++i) 
+	std::cout << std::left << std::setw(20) << weights_plus_[i];
+    std:: cout << std::endl;
+    std::cout << "Negative weights: " << std::endl;
+    for (size_t i = 0; i < weights_minus_.size(); ++i) 
+	std::cout << std::left << std::setw(20) << weights_minus_[i];
+}
