@@ -2,6 +2,7 @@
 #include <ol/Validator.h>
 #include <ol/Dataset.h>
 #include <ol/OneVsAll.h>
+#include <ol/MultiClassSVM.h>
 #include <ol/Constants.h>
 
 using namespace ol;
@@ -52,11 +53,15 @@ double Validator::validate(std::vector<FeatureVec> train_feature_vecs, std::vect
     size_t num_test = test_labels.size();
 
     // create predictor
-    OneVsAll ova(num_train, predictor_type);
+    MultiClassPredictor* mcp;
+    if(predictor_type.compare(std::string("svm")) == 0)
+      mcp = new MultiClassSVM(num_train);
+    else
+      mcp = new OneVsAll(num_train, predictor_type);
 
     // train
     for (size_t i = 0; i < num_train; ++i) 
-        ova.pushData(train_feature_vecs[i], train_labels[i]);
+        mcp->pushData(train_feature_vecs[i], train_labels[i]);
 
     std::vector<double> test_label_count(NUM_CLASSES, 0);
     std::vector<double> test_label_freq(NUM_CLASSES, 0);
@@ -67,7 +72,7 @@ double Validator::validate(std::vector<FeatureVec> train_feature_vecs, std::vect
     // test
     Label predicted_label;
     for (size_t i = 0; i < num_test; ++i) {
-        predicted_label = ova.predict(test_feature_vecs[i]);
+        predicted_label = mcp->predict(test_feature_vecs[i]);
 	// printf("actual : %d, predicted_label : %d\n", test_labels[i],
         //                                                   predicted_label);
 	test_label_count[test_labels[i]] += 1;
@@ -108,5 +113,8 @@ double Validator::validate(std::vector<FeatureVec> train_feature_vecs, std::vect
 
 	printf("Overall accuracy: %.2f\n\n", accuracy);
     }
+
+    delete mcp;
+
     return accuracy;
 }

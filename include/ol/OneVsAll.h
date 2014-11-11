@@ -8,9 +8,10 @@
 #include <ol/Predictor.h>
 #include <ol/Logistic.h>
 #include <ol/ExpGradDescent.h>
+#include <ol/MultiClassPredictor.h>
 
 namespace ol {
-    class OneVsAll {
+    class OneVsAll : public MultiClassPredictor{
     public:
         OneVsAll(int num_rounds, std::string type);
         Label predict(const FeatureVec& feature_vec);

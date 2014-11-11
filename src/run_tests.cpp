@@ -13,4 +13,5 @@ int main() {
     std::string test_file_name ("data/oakland_part3_an_rf.node_features");
     t.validatePredictor(train_file_name, test_file_name, "logistic"); 
     t.validatePredictor(train_file_name, test_file_name, "expgraddescent");
+    t.validatePredictor(train_file_name, test_file_name, "svm");
 }
