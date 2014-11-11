@@ -28,19 +28,25 @@ bool Test::testDataset(std::string file_name)
     return true;
 }
 
-bool Test::validatePredictor(std::string file_name, std::string predictor_type)
+bool Test::validatePredictor(std::string file_name, std::string predictor_type,
+                             bool adjust_for_under_represented_classes,
+                             int num_training_passes)
 {
     Validator v;
     bool print_choice = true;
-    double accuracy = v.validate(file_name, predictor_type, print_choice);
+    double accuracy = v.validate(file_name, predictor_type, print_choice,
+        adjust_for_under_represented_classes, num_training_passes);
     return true;
 }
 
 bool Test::validatePredictor(std::string train_file_name, std::string test_file_name,
-			       std::string predictor_type)
+			       std::string predictor_type,
+             bool adjust_for_under_represented_classes,
+             int num_training_passes)
 {
     Validator v;
     bool print_choice = true;
-    double accuracy = v.validate(train_file_name, test_file_name, predictor_type, print_choice);
+    double accuracy = v.validate(train_file_name, test_file_name, predictor_type, print_choice,
+                                 adjust_for_under_represented_classes, num_training_passes);
     return true;
 }

@@ -11,7 +11,15 @@ int main() {
 
     std::string train_file_name ("data/oakland_part3_am_rf.node_features");
     std::string test_file_name ("data/oakland_part3_an_rf.node_features");
-    t.validatePredictor(train_file_name, test_file_name, "logistic"); 
-    t.validatePredictor(train_file_name, test_file_name, "expgraddescent");
-    t.validatePredictor(train_file_name, test_file_name, "svm");
+
+
+    //Best Params
+    //method,   adjust_for_under_represented_classes, num_training_passes
+    //Logistic, false, 3
+    //Exp,      false, 1
+    //SVM,      true,  4
+
+    t.validatePredictor(train_file_name, test_file_name, "logistic", false, 3); 
+    t.validatePredictor(train_file_name, test_file_name, "expgraddescent", false, 1);
+    t.validatePredictor(train_file_name, test_file_name, "svm", true, 4);
 }
