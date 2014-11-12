@@ -11,6 +11,7 @@ class MultiClassExp : public MultiClassPredictor {
 	Label predict(const FeatureVec& feature_vec);
 	void pushData(const FeatureVec& feature_vec, Label label);
 	double getConfidence(const FeatureVec& feature_vec, const std::vector<double>& weights_plus, const std::vector<double>& weights_minus);
+	void printWeights();
     private:
 	std::vector<std::vector<double> > weights_plus_;
 	std::vector<std::vector<double> > weights_minus_;

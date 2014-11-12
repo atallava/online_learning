@@ -55,10 +55,21 @@ double Validator::validate(std::string train_file_name, std::string test_file_na
 	std::cout << "Predictor: " << predictor_type << "\n\n";
 	double elapsed_time = double(end-begin)/CLOCKS_PER_SEC;
 	printf("Training time (CPU): %0.2fs\n\n", elapsed_time);
+	mcp->printStreamLogs();
+	std::cout << std::string(50,'-') << std::endl;
     }
+
+    // visualize train pcd
+    // if (viz_choice) {
+    // 	std::vector<Label> predicted_labels = getPredictedLabels(train_feature_vecs, mcp);
+    // 	Visualizer vizer_train;
+    // 	vizer_train.visualize(train_dset.points(), train_labels,
+    // 			train_dset.points(), predicted_labels);
+    // }
 
     double accuracy = testPredictor(test_feature_vecs, test_labels, mcp, print_choice);
 
+    // visualize test pcd
     if (viz_choice) {
 	std::vector<Label> predicted_labels = getPredictedLabels(test_feature_vecs, mcp);
 	Visualizer vizer;
@@ -69,7 +80,6 @@ double Validator::validate(std::string train_file_name, std::string test_file_na
     delete mcp;
     return accuracy;
 }
-
 
 
 double Validator::validate(std::vector<FeatureVec> train_feature_vecs, std::vector<Label> train_labels, 
@@ -137,6 +147,7 @@ MultiClassPredictor* Validator::trainPredictor(std::vector<FeatureVec> train_fea
 	}
     }
     printf("training with %d passes through the data\n", num_training_passes);
+    std::cout << std::string(50,'-') << std::endl;
 
     // train
     for(int k=0; k<num_training_passes; k++)//run through the training set a few times
@@ -181,6 +192,8 @@ double Validator::testPredictor(std::vector<FeatureVec> test_feature_vecs,
 
     // pretty printing
     if (print_choice) {
+	std::cout << "Test data performance: \n\n";
+	std::cout << "Number of test samples: " << num_test << "\n\n";
 	std::cout << std::left << std::setw(20) << "CLASS NAME" 
 		  << std::left << std::setw(20) << "CLASS FREQUENCY" 
 		  << std::left << std::setw(20) << "PER CLASS ACCURACY" << std::endl;
@@ -200,6 +213,7 @@ double Validator::testPredictor(std::vector<FeatureVec> test_feature_vecs,
 	}
 
 	printf("Overall accuracy: %.2f\n\n", accuracy);
+	std::cout << std::string(100,'-') << std::endl << std::endl;
     }
 
     return accuracy;

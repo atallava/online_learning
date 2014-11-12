@@ -21,6 +21,6 @@ int main() {
 
     //t.validatePredictor(train_file_name, test_file_name, "logistic", false, 3); 
     //t.validatePredictor(train_file_name, test_file_name, "exp", false, 3);
-    t.validatePredictor(train_file_name, test_file_name, "multiexp", true, 1);
+    t.validatePredictor(train_file_name, test_file_name, "multiexp", false, 1);
     t.validatePredictor(train_file_name, test_file_name, "svm", true, 4);
 }

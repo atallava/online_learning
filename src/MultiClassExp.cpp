@@ -8,7 +8,7 @@
 
 using namespace ol;
 
-MultiClassExp::MultiClassExp(int num_rounds) : U_(10),
+MultiClassExp::MultiClassExp(int num_rounds) : U_(1),
 					       G_(1),
 					       margin_(1)
 {
@@ -21,7 +21,7 @@ MultiClassExp::MultiClassExp(int num_rounds) : U_(10),
 
 Label MultiClassExp::predict(const FeatureVec& feature_vec) 
 {
-    double max_confidence = std::numeric_limits<double>::min();
+    double max_confidence = static_cast<double>(std::numeric_limits<int>::min());
     int best_class = -1;
     for (size_t i = 0; i < NUM_CLASSES; i++) {
 	double confidence = getConfidence(feature_vec, weights_plus_[i], weights_minus_[i]);
@@ -35,6 +35,10 @@ Label MultiClassExp::predict(const FeatureVec& feature_vec)
 
 void MultiClassExp::pushData(const FeatureVec& feature_vec, Label label) 
 {
+    // update stream log
+    Label predicted_label = predict(feature_vec);
+    updateStreamLogs(label, predicted_label);
+
     for (size_t i = 0; i < NUM_CLASSES; i++) {
 	if (label == i)
 	    continue;
@@ -76,4 +80,15 @@ double MultiClassExp::getConfidence(const FeatureVec& feature_vec, const std::ve
 						 weights_minus.begin(), 0.0);
     double confidence = confidence_plus-confidence_minus;
     return confidence;
+}
+
+void MultiClassExp::printWeights()
+{
+    std::cout << "weights_plus - weights_minus: \n\n";
+    for (size_t i = 0; i < NUM_CLASSES; ++i) {
+	std::cout << CLASS_NAMES[i] << std::endl;
+	for (size_t j = 0; j < NUM_FEATURES; ++j)
+	    std::cout << std::left << std::setw(10) << weights_plus_[i][j]-weights_minus_[i][j];
+	std::cout << std::endl;
+    }
 }
