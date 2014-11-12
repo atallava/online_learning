@@ -59,7 +59,8 @@ void Visualizer::visualize(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_1,
   viewer.addPointCloud(cloud_2, rgb_2, "cloud_2", v2);
 
   viewer.addCoordinateSystem(1.0);
-  
+  viewer.setCameraPosition(180,180,0,0,0,1);
+
   while (!viewer.wasStopped()) {
     viewer.spinOnce(100);
   }

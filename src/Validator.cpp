@@ -32,7 +32,7 @@ double Validator::validate(std::string file_name, std::string predictor_type,
 }
 
 double Validator::validate(std::string train_file_name, std::string test_file_name, 
-			   std::string predictor_type, bool print_choice,
+			   std::string predictor_type, bool print_choice, bool viz_choice,
 			   bool adjust_for_under_represented_classes,
 			   int num_training_passes)
 {
@@ -45,11 +45,23 @@ double Validator::validate(std::string train_file_name, std::string test_file_na
     std::vector<FeatureVec> test_feature_vecs = test_dset.feature_vecs();
     std::vector<Label> test_labels = test_dset.labels();
 
-    return validate(train_feature_vecs, train_labels,
-		    test_feature_vecs, test_labels,
-		    predictor_type, print_choice,
-		    adjust_for_under_represented_classes,
-		    num_training_passes);
+    
+    MultiClassPredictor* mcp = trainPredictor(train_feature_vecs, train_labels, predictor_type, 
+					      adjust_for_under_represented_classes, num_training_passes);
+    if (print_choice)
+	std::cout << "Predictor: " << predictor_type << "\n\n";
+
+    double accuracy = testPredictor(test_feature_vecs, test_labels, mcp, print_choice);
+
+    if (viz_choice) {
+	std::vector<Label> predicted_labels = getPredictedLabels(test_feature_vecs, mcp);
+	Visualizer vizer;
+	vizer.visualize(test_dset.points(), test_labels,
+			test_dset.points(), predicted_labels);
+    }
+
+    delete mcp;
+    return accuracy;
 }
 
 
