@@ -1,4 +1,5 @@
 #include <iomanip>
+#include <ctime>
 #include <ol/Validator.h>
 #include <ol/Dataset.h>
 #include <ol/OneVsAll.h>
@@ -44,12 +45,17 @@ double Validator::validate(std::string train_file_name, std::string test_file_na
     std::vector<Label> train_labels = train_dset.labels();
     std::vector<FeatureVec> test_feature_vecs = test_dset.feature_vecs();
     std::vector<Label> test_labels = test_dset.labels();
-
     
+    std::clock_t begin = std::clock();    
     MultiClassPredictor* mcp = trainPredictor(train_feature_vecs, train_labels, predictor_type, 
 					      adjust_for_under_represented_classes, num_training_passes);
-    if (print_choice)
+    std::clock_t end = std::clock();
+
+    if (print_choice) {
 	std::cout << "Predictor: " << predictor_type << "\n\n";
+	double elapsed_time = double(end-begin)/CLOCKS_PER_SEC;
+	printf("Training time (CPU): %0.2fs\n\n", elapsed_time);
+    }
 
     double accuracy = testPredictor(test_feature_vecs, test_labels, mcp, print_choice);
 
