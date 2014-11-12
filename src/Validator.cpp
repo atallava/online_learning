@@ -3,6 +3,7 @@
 #include <ol/Dataset.h>
 #include <ol/OneVsAll.h>
 #include <ol/MultiClassSVM.h>
+#include <ol/MultiClassExp.h>
 #include <ol/Constants.h>
 
 using namespace ol;
@@ -64,8 +65,10 @@ double Validator::validate(std::vector<FeatureVec> train_feature_vecs, std::vect
 
     // create predictor
     MultiClassPredictor* mcp;
-    if(predictor_type.compare(std::string("svm")) == 0)
+    if (predictor_type.compare(std::string("svm")) == 0)
 	mcp = new MultiClassSVM(num_train*num_training_passes);
+    else if (predictor_type.compare(std::string("multiexp")) == 0)
+	mcp = new MultiClassExp(num_train*num_training_passes);
     else
 	mcp = new OneVsAll(num_train*num_training_passes, predictor_type);
 
@@ -85,7 +88,7 @@ double Validator::validate(std::vector<FeatureVec> train_feature_vecs, std::vect
 	for (size_t i = 0; i < NUM_CLASSES; ++i){
 	    class_iterations[i] = round(class_weight[i] / min_weight);
 	    printf("    class %d accounts for %f of the training data and will be repeated %d times\n",
-		   i,double(train_label_count[i])/num_train,class_iterations[i]);
+		   i, double(train_label_count[i])/num_train, class_iterations[i]);
 	}
     }
     printf("training with %d passes through the data\n",num_training_passes);

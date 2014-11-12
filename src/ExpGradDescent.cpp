@@ -21,11 +21,10 @@ int ExpGradDescent::predict(const FeatureVec& feature_vec, double& confidence)
 {
     double confidence_plus = std::inner_product(feature_vec.begin(), feature_vec.end(),
 						weights_plus_.begin(), 0.0);
-    double confidence_minus = 	std::inner_product(feature_vec.begin(), feature_vec.end(),
+    double confidence_minus = std::inner_product(feature_vec.begin(), feature_vec.end(),
 						   weights_minus_.begin(), 0.0);
     confidence = confidence_plus-confidence_minus;
     return (confidence > 0) ? 1 : -1;
-    printWeights();
 }
 
 void ExpGradDescent::pushData(const FeatureVec& feature_vec,  int label) 
