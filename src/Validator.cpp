@@ -60,65 +60,14 @@ double Validator::validate(std::vector<FeatureVec> train_feature_vecs, std::vect
 			   bool adjust_for_under_represented_classes,
 			   int num_training_passes)
 {
-    size_t num_train = train_labels.size();
-    size_t num_test = test_labels.size();
-
     MultiClassPredictor* mcp = trainPredictor(train_feature_vecs, train_labels, predictor_type, 
 					      adjust_for_under_represented_classes, num_training_passes);
-
-    std::vector<double> test_label_count(NUM_CLASSES, 0);
-    std::vector<double> test_label_freq(NUM_CLASSES, 0);
-    std::vector<double> per_label_accuracy(NUM_CLASSES, 0);
-    std::vector<std::vector<double> > confusion_matrix(NUM_CLASSES, std::vector<double>(NUM_CLASSES, 0));
-    double accuracy = 0.0;
-    
-    // test
-    std::vector<Label> predicted_labels = getPredictedLabels(test_feature_vecs, mcp);
-    for (size_t i = 0; i < num_test; ++i) {
-	Label predicted_label = predicted_labels[i];
-	// printf("actual : %d, predicted_label : %d\n", test_labels[i],
-        //                                                   predicted_label);
-	test_label_count[test_labels[i]] += 1;
-	confusion_matrix[test_labels[i]][predicted_label] += 1;
-	if (predicted_label == test_labels[i]) 
-	    per_label_accuracy[test_labels[i]] += 1;
-    }
-    for (size_t i = 0; i < NUM_CLASSES; ++i) {
-	if (test_label_count[i] > 0) {
-	    accuracy += per_label_accuracy[i];
-	    per_label_accuracy[i] /= test_label_count[i];
-	}
-	test_label_freq[i] = test_label_count[i]/num_test;
-    }
-    accuracy /= num_test;
-
-    // pretty printing
-    if (print_choice) {
+    if (print_choice)
 	std::cout << "Predictor: " << predictor_type << "\n\n";
-	
-	std::cout << std::left << std::setw(20) << "CLASS NAME" 
-		  << std::left << std::setw(20) << "CLASS FREQUENCY" 
-		  << std::left << std::setw(20) << "PER CLASS ACCURACY" << std::endl;
 
-	for (size_t i = 0; i < NUM_CLASSES; ++i) {
-	    std::cout << std::left << std::setw(20) << CLASS_NAMES[i] 
-		      << std::left << std::setw(20) << test_label_freq[i] 
-		      << std::left << std::setw(20) << per_label_accuracy[i] << std::endl;
-	}
-	std::cout << "\n";
-	std::cout << "Confusion Matrix: \n";
-	for (size_t i = 0; i < confusion_matrix.size(); ++i) {
-	    for (size_t j = 0; j < confusion_matrix[0].size(); ++j) {
-		std::cout << std::left << std::setw(10) << confusion_matrix[i][j];
-	    }
-	    std::cout << "\n\n";
-	}
-
-	printf("Overall accuracy: %.2f\n\n", accuracy);
-    }
+    double accuracy = testPredictor(test_feature_vecs, test_labels, mcp, print_choice);
 
     delete mcp;
-
     return accuracy;
 }
 
@@ -182,7 +131,58 @@ MultiClassPredictor* Validator::trainPredictor(std::vector<FeatureVec> train_fea
 
 double Validator::testPredictor(std::vector<FeatureVec> test_feature_vecs,
 				std::vector<Label> test_labels,
-				MultiClassPredictor* mcp) 
+				MultiClassPredictor* mcp, bool print_choice) 
 {
-    printf("Hello world\n");
+    size_t num_test = test_labels.size();
+
+    std::vector<double> test_label_count(NUM_CLASSES, 0);
+    std::vector<double> test_label_freq(NUM_CLASSES, 0);
+    std::vector<double> per_label_accuracy(NUM_CLASSES, 0);
+    std::vector<std::vector<double> > confusion_matrix(NUM_CLASSES, std::vector<double>(NUM_CLASSES, 0));
+    double accuracy = 0.0;
+    
+    // test
+    std::vector<Label> predicted_labels = getPredictedLabels(test_feature_vecs, mcp);
+    for (size_t i = 0; i < num_test; ++i) {
+	Label predicted_label = predicted_labels[i];
+	// printf("actual : %d, predicted_label : %d\n", test_labels[i],
+        //                                                   predicted_label);
+	test_label_count[test_labels[i]] += 1;
+	confusion_matrix[test_labels[i]][predicted_label] += 1;
+	if (predicted_label == test_labels[i]) 
+	    per_label_accuracy[test_labels[i]] += 1;
+    }
+    for (size_t i = 0; i < NUM_CLASSES; ++i) {
+	if (test_label_count[i] > 0) {
+	    accuracy += per_label_accuracy[i];
+	    per_label_accuracy[i] /= test_label_count[i];
+	}
+	test_label_freq[i] = test_label_count[i]/num_test;
+    }
+    accuracy /= num_test;
+
+    // pretty printing
+    if (print_choice) {
+	std::cout << std::left << std::setw(20) << "CLASS NAME" 
+		  << std::left << std::setw(20) << "CLASS FREQUENCY" 
+		  << std::left << std::setw(20) << "PER CLASS ACCURACY" << std::endl;
+
+	for (size_t i = 0; i < NUM_CLASSES; ++i) {
+	    std::cout << std::left << std::setw(20) << CLASS_NAMES[i] 
+		      << std::left << std::setw(20) << test_label_freq[i] 
+		      << std::left << std::setw(20) << per_label_accuracy[i] << std::endl;
+	}
+	std::cout << "\n";
+	std::cout << "Confusion Matrix: \n";
+	for (size_t i = 0; i < confusion_matrix.size(); ++i) {
+	    for (size_t j = 0; j < confusion_matrix[0].size(); ++j) {
+		std::cout << std::left << std::setw(10) << confusion_matrix[i][j];
+	    }
+	    std::cout << "\n\n";
+	}
+
+	printf("Overall accuracy: %.2f\n\n", accuracy);
+    }
+
+    return accuracy;
 }

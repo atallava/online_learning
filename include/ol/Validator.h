@@ -33,7 +33,7 @@ namespace ol {
 					    int num_training_passes);
 	double testPredictor(std::vector<FeatureVec> test_feature_vecs,
 			     std::vector<Label> test_labels,
-			     MultiClassPredictor* mcp);
+			     MultiClassPredictor* mcp, bool print_choice);
 					    
     private:
         size_t single_scene_num_train_;
