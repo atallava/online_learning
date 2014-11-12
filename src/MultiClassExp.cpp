@@ -8,7 +8,7 @@
 
 using namespace ol;
 
-MultiClassExp::MultiClassExp(int num_rounds) : U_(1),
+MultiClassExp::MultiClassExp(int num_rounds) : U_(5),
 					       G_(1),
 					       margin_(1)
 {

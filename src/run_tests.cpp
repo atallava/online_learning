@@ -17,10 +17,11 @@ int main() {
     //method,   adjust_for_under_represented_classes, num_training_passes
     //Logistic, false, 3
     //Exp,      true/ false, 2
+    //MultiExp, false, 4, U_ = 5
     //SVM,      true,  4
 
     //t.validatePredictor(train_file_name, test_file_name, "logistic", false, 3); 
     //t.validatePredictor(train_file_name, test_file_name, "exp", false, 3);
-    t.validatePredictor(train_file_name, test_file_name, "multiexp", false, 1);
+    t.validatePredictor(train_file_name, test_file_name, "multiexp", false, 4);
     t.validatePredictor(train_file_name, test_file_name, "svm", true, 4);
 }

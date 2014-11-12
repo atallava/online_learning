@@ -76,3 +76,22 @@ Label Dataset::mapRawLabelToLabel(int raw_label)
     }
     return label;
 }
+
+void Dataset::shuffleData() 
+{
+    std::vector<int> ids;
+    for (size_t i = 0; i < labels_.size(); ++i)
+	ids.push_back(i);
+    
+    std::random_shuffle(ids.begin(), ids.end());
+
+    std::vector<Label> tmp_labels(labels_);
+    std::vector<pcl::PointXYZ> tmp_points(points_);
+    std::vector<FeatureVec> tmp_feature_vecs(feature_vecs_);
+    
+    for (size_t i = 0; i < ids.size(); ++i) {
+	labels_[i] = tmp_labels[ids[i]];
+	points_[i] = tmp_points[ids[i]];
+	feature_vecs_[i] = tmp_feature_vecs[ids[i]];
+    }
+}
