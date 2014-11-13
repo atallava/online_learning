@@ -9,7 +9,7 @@
 
 using namespace ol;
 
-ExpGradDescent::ExpGradDescent(int num_rounds) : U_(15),
+ExpGradDescent::ExpGradDescent(int num_rounds, double U) : U_(U),
 						 G_(1)
 {
     weights_plus_ = std::vector<double>(NUM_FEATURES, 0.5*U_/static_cast<double>(NUM_FEATURES));

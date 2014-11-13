@@ -4,7 +4,7 @@
 
 using namespace ol;
 
-MultiClassSVM::MultiClassSVM(int num_rounds){
+MultiClassSVM::MultiClassSVM(int num_rounds, double lambda) : lambda_(lambda) {
   weights_.resize(NUM_CLASSES);
   for(unsigned int i=0; i<weights_.size(); i++)
     weights_[i].resize(NUM_FEATURES, 1.0/NUM_FEATURES);
@@ -18,7 +18,7 @@ MultiClassSVM::MultiClassSVM(int num_rounds){
   lambda_ = params[run];
   run++;
   */
-  lambda_ = 0.0001;
+  //lambda_ = 0.0001;
 
   //double G_ = 1;
   //learning_rate_ = sqrt(std::log(NUM_FEATURES)/num_rounds)/G_;

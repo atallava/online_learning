@@ -11,7 +11,7 @@
 
 using namespace ol;
 
-double Validator::validate(std::string file_name, std::string predictor_type, 
+double Validator::validate(std::string file_name, std::string predictor_type, double predictor_param,
 			   bool print_choice, 
 			   bool adjust_for_under_represented_classes,
 			   int num_training_passes)
@@ -29,13 +29,14 @@ double Validator::validate(std::string file_name, std::string predictor_type,
 
     return validate(train_feature_vecs, train_labels,
 		    test_feature_vecs, test_labels,
-		    predictor_type, print_choice,
+		    predictor_type, predictor_param, print_choice,
 		    adjust_for_under_represented_classes,
 		    num_training_passes);
 }
 
 double Validator::validate(std::string train_file_name, std::string test_file_name, 
-			   std::string predictor_type, bool print_choice, bool viz_choice,
+			   std::string predictor_type, double predictor_param,
+			   bool print_choice, bool viz_choice,
 			   bool adjust_for_under_represented_classes,
 			   int num_training_passes)
 {
@@ -51,7 +52,7 @@ double Validator::validate(std::string train_file_name, std::string test_file_na
     std::vector<Label> test_labels = test_dset.labels();
     
     std::clock_t begin = std::clock();    
-    MultiClassPredictor* mcp = trainPredictor(train_feature_vecs, train_labels, predictor_type, 
+    MultiClassPredictor* mcp = trainPredictor(train_feature_vecs, train_labels, predictor_type, predictor_param,
 					      adjust_for_under_represented_classes, num_training_passes);
     std::clock_t end = std::clock();
 
@@ -88,11 +89,11 @@ double Validator::validate(std::string train_file_name, std::string test_file_na
 
 double Validator::validate(std::vector<FeatureVec> train_feature_vecs, std::vector<Label> train_labels, 
 			   std::vector<FeatureVec> test_feature_vecs, std::vector<Label> test_labels, 
-			   std::string predictor_type, bool print_choice,
-			   bool adjust_for_under_represented_classes,
+			   std::string predictor_type, double predictor_param,
+			   bool print_choice, bool adjust_for_under_represented_classes,
 			   int num_training_passes)
 {
-    MultiClassPredictor* mcp = trainPredictor(train_feature_vecs, train_labels, predictor_type, 
+    MultiClassPredictor* mcp = trainPredictor(train_feature_vecs, train_labels, predictor_type, predictor_param,
 					      adjust_for_under_represented_classes, num_training_passes);
     if (print_choice)
 	std::cout << "Predictor: " << predictor_type << "\n\n";
@@ -114,10 +115,10 @@ std::vector<Label> Validator::getPredictedLabels(const std::vector<FeatureVec>& 
 }
 
 MultiClassPredictor* Validator::trainPredictor(std::vector<FeatureVec> train_feature_vecs, 
-				    std::vector<Label> train_labels, 
-				    std::string predictor_type,
-				    bool adjust_for_under_represented_classes, 
-				    int num_training_passes)
+					       std::vector<Label> train_labels, 
+					       std::string predictor_type, double predictor_param,
+					       bool adjust_for_under_represented_classes, 
+					       int num_training_passes)
 {
     size_t num_train = train_labels.size();
 
@@ -152,15 +153,15 @@ MultiClassPredictor* Validator::trainPredictor(std::vector<FeatureVec> train_fea
     // create predictor
     MultiClassPredictor* mcp;
     if (predictor_type.compare(std::string("svm")) == 0)
-      mcp = new MultiClassSVM(num_train*num_training_passes);
+	mcp = new MultiClassSVM(num_train*num_training_passes, predictor_param);
     else if (predictor_type.compare(std::string("kernel_svm")) == 0)
-      mcp = new MultiClassKernelSVM(num_train*num_training_passes);
+	mcp = new MultiClassKernelSVM(num_train*num_training_passes, predictor_param);
     else if (predictor_type.compare(std::string("multiexp")) == 0)
-      mcp = new MultiClassExp(num_train*num_training_passes);
+	mcp = new MultiClassExp(num_train*num_training_passes, predictor_param);
     else if (predictor_type.compare(std::string("multilog")) == 0)
-      mcp = new MultiClassLogistic(num_train*num_training_passes);
+	mcp = new MultiClassLogistic(num_train*num_training_passes, predictor_param);
     else
-      mcp = new OneVsAll(num_train*num_training_passes, predictor_type);
+	mcp = new OneVsAll(num_train*num_training_passes, predictor_type, predictor_param);
 
     // adjust training data
     std::vector<int> train_label_count(NUM_CLASSES, 0);

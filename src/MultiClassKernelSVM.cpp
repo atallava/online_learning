@@ -7,7 +7,7 @@ using namespace std;
 
 #define APPROX true
 
-MultiClassKernelSVM::MultiClassKernelSVM(int num_rounds){
+MultiClassKernelSVM::MultiClassKernelSVM(int num_rounds, double lambda) : lambda_(lambda) {
   alpha_.resize(NUM_CLASSES);
 #if APPROX
   best_alpha_.resize(NUM_CLASSES);
@@ -23,7 +23,7 @@ MultiClassKernelSVM::MultiClassKernelSVM(int num_rounds){
   lambda_ = params[run];
   run++;
   */
-  lambda_ = 0.0001;
+  //lambda_ = 0.0001;
   gamma_ = 10000;
 
 

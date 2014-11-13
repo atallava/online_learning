@@ -4,7 +4,7 @@
 
 using namespace ol;
 
-Logistic::Logistic(int num_rounds)
+Logistic::Logistic(int num_rounds, double lambda)
     :   num_rounds_(num_rounds),
         weights_(NUM_FEATURES, 1.0/static_cast<double>(NUM_FEATURES)),
         current_iteration_(0)
@@ -25,6 +25,7 @@ void Logistic::pushData(const FeatureVec& features, int label)
         features.begin(), 0);
     // update the weights
     for (size_t j = 0; j < weights_.size(); j++) {
+	weights_[j] -= learning_rate_ * lambda_*weights_[j];
         weights_[j] += learning_rate_ * (label - sigmoid(w_t_x))*features[j];
     }
 }

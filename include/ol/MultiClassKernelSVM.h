@@ -13,7 +13,7 @@ class AlphaCompare{
 
 class MultiClassKernelSVM: public MultiClassPredictor{
   public:
-    MultiClassKernelSVM(int num_rounds);
+    MultiClassKernelSVM(int num_rounds, double lambda);
     Label predict(const FeatureVec& feature_vec);
     void pushData(const FeatureVec& feature_vec, Label label);
   private:

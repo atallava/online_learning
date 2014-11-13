@@ -14,7 +14,7 @@ namespace ol {
     class Logistic : public Predictor {
     public:
         // uniform prior for the weights
-        Logistic(int num_rounds);
+        Logistic(int num_rounds, double lambda);
         int predict(const FeatureVec& feature_vec, double& confidence);
         void pushData(const FeatureVec& feature_vec,  int label);
         static std::pair<int,int> getBinaryLabels();
@@ -22,6 +22,7 @@ namespace ol {
         int num_rounds_;
         std::vector<double> weights_;
         double learning_rate_;
+	double lambda_;
         int current_iteration_;
     };
 }
