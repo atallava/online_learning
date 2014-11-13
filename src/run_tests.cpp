@@ -17,6 +17,7 @@ int main() {
     //method,   adjust_for_under_represented_classes, num_training_passes
     //Logistic, false, 3
     //Exp,      true/ false, 2
+    //MultiExp, false, 4, U_ = 5
     //SVM,      true,  4
 
     // t.validatePredictor(train_file_name, test_file_name, "logistic", false, 3); 

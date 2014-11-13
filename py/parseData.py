@@ -66,3 +66,4 @@ def writePCD(coords,labels,fname):
 def getLabelFrequency(labels):
     freq = collections.Counter(labels)
     return freq.values()
+

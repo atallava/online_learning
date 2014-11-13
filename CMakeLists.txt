@@ -51,10 +51,12 @@ include_directories(${OL_INCLUDE_DIRECTORIES})
 
 # Add files here to compile them
 add_library(ol SHARED 	src/Dataset.cpp
-  src/Visualizer.cpp
+                        src/Visualizer.cpp
 
                         src/ExpGradDescent.cpp
                         src/Logistic.cpp
+
+						src/MultiClassPredictor.cpp
                         src/MultiClassSVM.cpp
 						src/MultiClassExp.cpp
 						src/MultiClassLogistic.cpp
