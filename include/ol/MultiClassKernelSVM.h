@@ -4,6 +4,13 @@
 
 namespace ol {
 
+class AlphaCompare{
+  public:
+    bool operator() (const std::pair<int,double>& lhs, const std::pair<int,double>& rhs) const{
+      return fabs(lhs.second) < fabs(rhs.second);
+    }
+};
+
 class MultiClassKernelSVM: public MultiClassPredictor{
   public:
     MultiClassKernelSVM(int num_rounds);
@@ -14,7 +21,7 @@ class MultiClassKernelSVM: public MultiClassPredictor{
     double RBF(const std::vector<double>& x1, const std::vector<double>& x2);
 
     std::vector<std::vector<double> > alpha_;
-    std::vector<std::set<std::pair<int,double> > > best_alpha_;
+    std::vector<std::set<std::pair<int,double>, AlphaCompare> > best_alpha_;
     std::vector<FeatureVec> data_;
     double learning_rate_;
     int current_iteration_;

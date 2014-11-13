@@ -11,7 +11,7 @@ MultiClassKernelSVM::MultiClassKernelSVM(int num_rounds){
   alpha_.resize(NUM_CLASSES);
 #if APPROX
   best_alpha_.resize(NUM_CLASSES);
-  num_alpha_used_ = 100;
+  num_alpha_used_ = 15;
 #endif
   current_iteration_ = 0;
 
@@ -27,21 +27,31 @@ MultiClassKernelSVM::MultiClassKernelSVM(int num_rounds){
   gamma_ = 10000;
 
 
-  //double G_ = 1;
-  //learning_rate_ = sqrt(std::log(NUM_FEATURES)/num_rounds)/G_;
+  double G_ = 1;
+  learning_rate_ = sqrt(std::log(NUM_FEATURES)/num_rounds)/G_;
 }
 
 void MultiClassKernelSVM::pushData(const FeatureVec& features, Label label){
-  if(current_iteration_ % 10000 == 0)
+  if(current_iteration_ % 10000 == 0){
     printf("data point %d\n",current_iteration_);
+    printf("learning rate %f\n",1.0/(current_iteration_+1));
+    printf("best alphas\n");
+    for(unsigned int i=0; i<best_alpha_.size(); i++){
+      printf("class %d: ", i);
+      for(set<pair<int,double> >::iterator it=best_alpha_[i].begin(); it!=best_alpha_[i].end(); it++)
+        printf("(%d, %f) ", it->first, it->second);
+      printf("\n");
+    }
+    std::cin.get();
+  }
   current_iteration_++;
   // set the learning rate adaptively
-  learning_rate_ = static_cast<double>(1.0/current_iteration_);
+  //learning_rate_ = static_cast<double>(1.0/current_iteration_);
 
   //regularization
 #if APPROX
   for(unsigned int i=0; i<best_alpha_.size(); i++){
-    set<pair<int,double> > temp_set;
+    set<pair<int,double>, AlphaCompare> temp_set;
     for(set<pair<int,double> >::iterator it=best_alpha_[i].begin(); it!=best_alpha_[i].end(); it++)
       temp_set.insert(pair<int,double>(it->first, it->second*(1 - 2 * learning_rate_ * lambda_)));
     best_alpha_[i] = temp_set;
@@ -74,9 +84,8 @@ void MultiClassKernelSVM::pushData(const FeatureVec& features, Label label){
     if(best_alpha_[i].size() < (unsigned int)num_alpha_used_)
       best_alpha_[i].insert(pair<int,double>(data_.size()-1, temp_alpha[i]));
     else{
-      set<pair<int,double> >::iterator smallest_alpha =  best_alpha_[i].end();
-      smallest_alpha--;
-      if(temp_alpha[i] > smallest_alpha->second){
+      set<pair<int,double> >::iterator smallest_alpha =  best_alpha_[i].begin();
+      if(fabs(temp_alpha[i]) > fabs(smallest_alpha->second)){
         best_alpha_[i].erase(smallest_alpha);
         best_alpha_[i].insert(pair<int,double>(data_.size()-1, temp_alpha[i]));
       }
@@ -118,6 +127,10 @@ Label MultiClassKernelSVM::predict(const FeatureVec& features){
       //printf("best class update!\n");
     }
   }
+  if(best_class == -1){
+    printf("predict returning invalid class!\n");
+    exit(6);
+  }
   return (Label)best_class;
 }
 
@@ -134,6 +147,10 @@ double MultiClassKernelSVM::kernelFunction(int kernel_id, const FeatureVec& feat
     sum += alpha_[kernel_id][i] * RBF(features, data_[i]);
   }
 #endif
+  if(std::isnan(sum)){
+    printf("kernelFunction returning nan!\n");
+    exit(5);
+  }
   return sum;
 }
 
