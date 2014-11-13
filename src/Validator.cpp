@@ -39,6 +39,7 @@ double Validator::validate(std::string train_file_name, std::string test_file_na
 			   int num_training_passes)
 {
     Dataset train_dset(train_file_name);
+    train_dset.whitenData();
     train_dset.shuffleData();
     Dataset test_dset(test_file_name);
 
@@ -146,7 +147,7 @@ MultiClassPredictor* Validator::trainPredictor(std::vector<FeatureVec> train_fea
 	}
 	for (size_t i = 0; i < NUM_CLASSES; ++i){
 	    class_iterations[i] = round(class_weight[i] / min_weight);
-	    printf("    class %d accounts for %f of the training data and will be repeated %d times\n",
+	    printf("    class %lu accounts for %f of the training data and will be repeated %d times\n",
 		   i, double(train_label_count[i])/num_train, class_iterations[i]);
 	}
     }

@@ -19,21 +19,25 @@ MultiClassLogistic::MultiClassLogistic(int num_rounds)
 void MultiClassLogistic::pushData(const FeatureVec& features, Label label)
 {
     current_iteration_++;
-    // skip the last label because our vector is just 0s
-    if (label == NUM_CLASSES - 1)
-        return;
+    Label predicted_label = predict(features);
+    updateStreamLogs(label, predicted_label);
+
     // set the learning rate adaptively
-    learning_rate_ = static_cast<double>(1.0/current_iteration_);
+    learning_rate_ = static_cast<double>(1.0/std::sqrt(current_iteration_));
 
-    //regularization - not for all. Just for the correct one.
-    for(unsigned int j=0; j < weights_[label].size(); j++)
-        weights_[label][j] -= learning_rate_ * lambda_ * weights_[label][j];
+    //regularization
+    for(unsigned int i=0; i < weights_.size(); i++)
+        for(unsigned int j=0; j < weights_[i].size(); j++)
+            weights_[i][j] -= learning_rate_ * lambda_ * weights_[i][j];
 
-    double wx_correct = std::inner_product(weights_[label].begin(),
-                                weights_[label].end(), features.begin(), 0.0);
     double z = getNormalizer(features);
-    for (size_t j = 0; j < weights_[label].size(); j++) {
-        weights_[label][j] -= learning_rate_*(std::exp(wx_correct)/z -1)*features[j];
+    for (size_t i = 0; i < weights_.size(); i++) {
+        double wx = std::inner_product(weights_[i].begin(),
+                                weights_[i].end(), features.begin(), 0.0);
+        for (size_t j = 0; j < weights_[i].size(); j++) {
+            weights_[i][j] -= learning_rate_*(std::exp(wx)/z - 
+                static_cast<double>(label == i))*features[j];
+        }
     }
 }
 
