@@ -5,6 +5,7 @@
 #include <ol/OneVsAll.h>
 #include <ol/MultiClassSVM.h>
 #include <ol/MultiClassExp.h>
+#include <ol/MultiClassLogistic.h>
 #include <ol/Constants.h>
 
 using namespace ol;
@@ -113,6 +114,8 @@ MultiClassPredictor* Validator::trainPredictor(std::vector<FeatureVec> train_fea
 	mcp = new MultiClassSVM(num_train*num_training_passes);
     else if (predictor_type.compare(std::string("multiexp")) == 0)
 	mcp = new MultiClassExp(num_train*num_training_passes);
+    else if (predictor_type.compare(std::string("multilog")) == 0)
+    mcp = new MultiClassLogistic(num_train*num_training_passes);
     else
 	mcp = new OneVsAll(num_train*num_training_passes, predictor_type);
 
