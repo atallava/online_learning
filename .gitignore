@@ -31,3 +31,9 @@
 build/
 lib/
 bin/
+
+# Latex stuff
+latex/*.log
+latex/*.out
+latex/*.pdf
+latex/*.aux
