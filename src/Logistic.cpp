@@ -25,8 +25,7 @@ void Logistic::pushData(const FeatureVec& features, int label)
         features.begin(), 0);
     // update the weights
     for (size_t j = 0; j < weights_.size(); j++) {
-        weights_[j] = weights_[j] + learning_rate_ * (label - sigmoid(w_t_x)) *
-                                                                    features[j];
+        weights_[j] += learning_rate_ * (label - sigmoid(w_t_x))*features[j];
     }
 }
 

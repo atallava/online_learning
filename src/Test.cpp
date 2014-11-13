@@ -46,7 +46,8 @@ bool Test::validatePredictor(std::string train_file_name, std::string test_file_
 {
     Validator v;
     bool print_choice = true;
+    bool viz_choice = true;
     double accuracy = v.validate(train_file_name, test_file_name, predictor_type, print_choice,
-                                 adjust_for_under_represented_classes, num_training_passes);
+                                 viz_choice, adjust_for_under_represented_classes, num_training_passes);
     return true;
 }

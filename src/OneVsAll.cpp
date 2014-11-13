@@ -12,7 +12,7 @@ OneVsAll::OneVsAll(int num_rounds, std::string type)
         for (int i = 0; i < NUM_CLASSES; i++)
             binary_predictors_.push_back(std::make_shared<Logistic>(num_rounds));
         binary_labels_ = Logistic::getBinaryLabels();
-    } else if (type.compare(std::string("expgraddescent")) == 0) {
+    } else if (type.compare(std::string("exp")) == 0) {
         for (int i = 0; i < NUM_CLASSES; i++)
             binary_predictors_.push_back(std::make_shared<ExpGradDescent>(num_rounds));
         binary_labels_ = ExpGradDescent::getBinaryLabels();
@@ -23,6 +23,10 @@ OneVsAll::OneVsAll(int num_rounds, std::string type)
 
 void OneVsAll::pushData(const FeatureVec& feature_vec, Label label)
 {
+    // update stream log
+    Label predicted_label = predict(feature_vec);
+    updateStreamLogs(label, predicted_label);
+
     for(int i = 0; i < NUM_CLASSES; i++) {
         int y = (static_cast<int>(label) == i) ?
                             binary_labels_.second:binary_labels_.first;

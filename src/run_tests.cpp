@@ -16,12 +16,18 @@ int main() {
     //Best Params
     //method,   adjust_for_under_represented_classes, num_training_passes
     //Logistic, false, 3
-    //Exp,      false, 1
+    //Exp,      true/ false, 2
+    //MultiExp, false, 4, U_ = 5
     //SVM,      true,  4
+    //MultiLog,      true,  3
 
-    t.validatePredictor(train_file_name, test_file_name, "logistic", false, 3); 
-    t.validatePredictor(train_file_name, test_file_name, "expgraddescent", false, 1);
-    t.validatePredictor(train_file_name, test_file_name, "svm", true, 4);
+    // t.validatePredictor(train_file_name, test_file_name, "logistic", false, 3); 
+    //t.validatePredictor(train_file_name, test_file_name, "multilog", true, 4); 
+    //t.validatePredictor(train_file_name, test_file_name, "exp", false, 3);
+    // t.validatePredictor(train_file_name, test_file_name, "multiexp", true, 4);
+    //t.validatePredictor(train_file_name, test_file_name, "svm", true, 4);
+    
     //t.validatePredictor(train_file_name, test_file_name, "kernel_svm", false, 1);
+    t.validatePredictor(train_file_name, test_file_name, "kernel_svm", true, 1);
     //t.validatePredictor(train_file_name, test_file_name, "kernel_svm", true, 1);
 }

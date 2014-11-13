@@ -25,6 +25,10 @@ MultiClassSVM::MultiClassSVM(int num_rounds){
 }
 
 void MultiClassSVM::pushData(const FeatureVec& features, Label label){
+  // update stream log
+  Label predicted_label = predict(features);
+  updateStreamLogs(label, predicted_label);
+
   current_iteration_++;
   // set the learning rate adaptively
   learning_rate_ = static_cast<double>(1.0/current_iteration_);
@@ -52,7 +56,6 @@ void MultiClassSVM::pushData(const FeatureVec& features, Label label){
       }
     }
   }
-
 }
 
 Label MultiClassSVM::predict(const FeatureVec& features){
