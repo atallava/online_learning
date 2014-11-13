@@ -39,7 +39,7 @@ double Validator::validate(std::string train_file_name, std::string test_file_na
 			   int num_training_passes)
 {
     Dataset train_dset(train_file_name);
-    train_dset.whitenData();
+    //train_dset.whitenData();
     train_dset.shuffleData();
     Dataset test_dset(test_file_name);
 
