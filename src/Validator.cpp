@@ -3,6 +3,7 @@
 #include <ol/Dataset.h>
 #include <ol/OneVsAll.h>
 #include <ol/MultiClassSVM.h>
+#include <ol/MultiClassKernelSVM.h>
 #include <ol/Constants.h>
 
 using namespace ol;
@@ -62,10 +63,40 @@ double Validator::validate(std::vector<FeatureVec> train_feature_vecs, std::vect
     size_t num_train = train_labels.size();
     size_t num_test = test_labels.size();
 
+    //normalize features
+    /*
+    std::vector<double> feature_min(train_feature_vecs[0].size(),std::numeric_limits<double>::max());
+    std::vector<double> feature_max(train_feature_vecs[0].size(),std::numeric_limits<double>::min());
+    for(unsigned int i=0; i<train_feature_vecs.size(); i++){
+      for(unsigned int j=0; j<train_feature_vecs[i].size(); j++){
+        if(train_feature_vecs[i][j] < feature_min[j])
+          feature_min[j] = train_feature_vecs[i][j];
+        if(train_feature_vecs[i][j] > feature_max[j])
+          feature_max[j] = train_feature_vecs[i][j];
+      }
+    }
+    for(unsigned int i=0; i<feature_max.size(); i++){
+      if(feature_max[i]-feature_min[i] == 0.0){
+        feature_max[i] = 1;
+        feature_min[i] = 0;
+      }
+    }
+    for(unsigned int i=0; i<feature_max.size(); i++)
+      printf("feature %d: min=%f max=%f range=%f\n",i,feature_min[i],feature_max[i],feature_max[i]-feature_min[i]);
+    for(unsigned int i=0; i<train_feature_vecs.size(); i++)
+      for(unsigned int j=0; j<train_feature_vecs[i].size(); j++)
+        train_feature_vecs[i][j] = (train_feature_vecs[i][j]-feature_min[j])/(feature_max[j]-feature_min[j]);
+    for(unsigned int i=0; i<test_feature_vecs.size(); i++)
+      for(unsigned int j=0; j<test_feature_vecs[i].size(); j++)
+        test_feature_vecs[i][j] = (test_feature_vecs[i][j]-feature_min[j])/(feature_max[j]-feature_min[j]);
+        */
+
     // create predictor
     MultiClassPredictor* mcp;
     if(predictor_type.compare(std::string("svm")) == 0)
       mcp = new MultiClassSVM(num_train);
+    else if(predictor_type.compare(std::string("kernel_svm")) == 0)
+      mcp = new MultiClassKernelSVM(num_train);
     else
       mcp = new OneVsAll(num_train, predictor_type);
 

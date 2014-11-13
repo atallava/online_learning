@@ -24,31 +24,6 @@ MultiClassSVM::MultiClassSVM(int num_rounds){
   //learning_rate_ = sqrt(std::log(NUM_FEATURES)/num_rounds)/G_;
 }
 
-/*
-double MultiClassSVM::validateOnDataset(std::string dataset_file_name){
-  Dataset dset(dataset_file_name);
-  std::vector<FeatureVec> feature_vecs = dset.feature_vecs();
-  std::vector<Label> labels = dset.labels();
-
-  //training
-  for(unsigned int i=0; i<num_train_; ++i) 
-    pushData(feature_vecs[i], labels[i]);
-
-  //test
-  double accuracy = 0.0;
-  Label predicted_label;
-  for(unsigned int i=0; i<num_test_ && i<feature_vecs.size(); ++i){
-    predicted_label = predict(feature_vecs[num_train_+i]);
-        // printf("actual : %d, predicted_label : %d\n", labels[num_train_+i],
-        //                                                 predicted_label);
-    if(predicted_label == labels[num_train_+i])
-      accuracy++;
-  }
-  accuracy /= num_test_;
-  return accuracy;
-}
-*/
-
 void MultiClassSVM::pushData(const FeatureVec& features, Label label){
   current_iteration_++;
   // set the learning rate adaptively

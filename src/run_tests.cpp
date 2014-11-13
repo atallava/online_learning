@@ -22,4 +22,6 @@ int main() {
     t.validatePredictor(train_file_name, test_file_name, "logistic", false, 3); 
     t.validatePredictor(train_file_name, test_file_name, "expgraddescent", false, 1);
     t.validatePredictor(train_file_name, test_file_name, "svm", true, 4);
+    //t.validatePredictor(train_file_name, test_file_name, "kernel_svm", false, 1);
+    //t.validatePredictor(train_file_name, test_file_name, "kernel_svm", true, 1);
 }

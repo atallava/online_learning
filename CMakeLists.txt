@@ -56,6 +56,7 @@ add_library(ol SHARED 	src/Dataset.cpp
                         src/ExpGradDescent.cpp
                         src/Logistic.cpp
                         src/MultiClassSVM.cpp
+                        src/MultiClassKernelSVM.cpp
 
                         src/OneVsAll.cpp
 
