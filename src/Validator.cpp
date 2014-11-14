@@ -41,7 +41,6 @@ double Validator::validate(std::string train_file_name, std::string test_file_na
 			   int num_training_passes)
 {
     Dataset train_dset(train_file_name);
-    //train_dset.whitenData();
     train_dset.balanceClasses();
     train_dset.shuffleData();
     Dataset test_dset(test_file_name);
@@ -61,10 +60,10 @@ double Validator::validate(std::string train_file_name, std::string test_file_na
     MultiClassPredictor* mcp = trainPredictor(train_feature_vecs, train_labels, predictor_type, predictor_param,
 					      adjust_for_under_represented_classes, num_training_passes);
     std::clock_t end = std::clock();
+    double elapsed_time = double(end-begin)/CLOCKS_PER_SEC;
 
     if (print_choice) {
 	std::cout << "Predictor: " << predictor_type << "\n\n";
-	double elapsed_time = double(end-begin)/CLOCKS_PER_SEC;
 	printf("Training time (CPU): %0.2fs\n\n", elapsed_time);
 	mcp->printStreamLogs();
 	std::cout << std::string(50,'-') << std::endl;
@@ -79,14 +78,21 @@ double Validator::validate(std::string train_file_name, std::string test_file_na
     // }
 
     double accuracy = testPredictor(test_feature_vecs, test_labels, mcp, print_choice);
-
+	
     // visualize test pcd
     if (viz_choice) {
       printf("visualize!\n");
 	std::vector<Label> predicted_labels = getPredictedLabels(test_feature_vecs, mcp);
 	Visualizer vizer;
-	vizer.visualize(test_dset.points(), test_labels,
-			test_dset.points(), predicted_labels);
+	// visualize ground truth and predictions side-by-side
+	// vizer.visualize(test_dset.points(), test_labels,
+	// 		test_dset.points(), predicted_labels);
+
+	std::string file_name;
+	file_name = "pcl_viz/" + predictor_type + "_test.png";
+	vizer.setFileLocation(file_name);
+	// visualize only predictions; write to disk
+	vizer.visualize(test_dset.points(), predicted_labels);
     }
 
     delete mcp;
@@ -185,6 +191,7 @@ double Validator::testPredictor(std::vector<FeatureVec> test_feature_vecs,
 				std::vector<Label> test_labels,
 				MultiClassPredictor* mcp, bool print_choice) 
 {
+    std::clock_t begin = std::clock();    
     size_t num_test = test_labels.size();
 
     std::vector<double> test_label_count(NUM_CLASSES, 0);
@@ -212,10 +219,13 @@ double Validator::testPredictor(std::vector<FeatureVec> test_feature_vecs,
 	test_label_freq[i] = test_label_count[i]/num_test;
     }
     accuracy /= num_test;
+    std::clock_t end = std::clock();
+    double elapsed_time = double(end-begin)/CLOCKS_PER_SEC;
 
     // pretty printing
     if (print_choice) {
 	std::cout << "Test data performance: \n\n";
+	printf("Test time (CPU): %0.2fs\n\n", elapsed_time);
 	std::cout << "Number of test samples: " << num_test << "\n\n";
 	std::cout << std::left << std::setw(20) << "CLASS NAME" 
 		  << std::left << std::setw(20) << "CLASS FREQUENCY" 
@@ -240,4 +250,101 @@ double Validator::testPredictor(std::vector<FeatureVec> test_feature_vecs,
     }
 
     return accuracy;
+}
+
+void Validator::trainPredictor(const Dataset& dataset, std::pair<int,int>
+    testset,std::string predictor_type, ValidatorParams params)
+{
+    std::vector<FeatureVec> features = dataset.feature_vecs();
+    std::vector<Label> labels = dataset.labels();
+
+    // transform the params to the multi class params
+    auto predictor_params = params.getPredictorParams();
+    predictor_params.num_rounds = dataset.size() -
+                                  (testset.second - testset.first);
+
+    // create the right instances
+    if (predictor_type.compare(std::string("svm")) == 0)
+        predictor_.reset(new MultiClassSVM(predictor_params));
+    else if (predictor_type.compare(std::string("kernel_svm")) == 0)
+        predictor_.reset(new MultiClassKernelSVM(predictor_params));
+    else if (predictor_type.compare(std::string("multiexp")) == 0)
+        predictor_.reset(new MultiClassExp(predictor_params));
+    else if (predictor_type.compare(std::string("multilog")) == 0)
+        predictor_.reset(new MultiClassLogistic(predictor_params));
+    else
+        predictor_.reset(new OneVsAll(predictor_type, predictor_params));
+    
+    printf("training with %d passes through the data\n",
+                            params.num_training_passes);
+    std::cout << std::string(50,'-') << std::endl;
+
+    // train!
+    for(int k=0; k<params.num_training_passes; k++) {
+      for (size_t i = 0; i < dataset.size(); ++i) {
+        // skip the testset
+        if (i >= testset.first && i < testset.second) {
+            ;
+        } else { 
+            predictor_->pushData(features[i], labels[i]);
+        }
+      }
+    }
+}
+
+double Validator::testPredictor(const Dataset& dataset, std::pair<int,int>
+    testset)
+{
+    size_t num_test = testset.second - testset.first;
+    // printf("num test %d: %d %d\n", num_test, testset.first, testset.second);
+
+    // printf("size of featurevecs : %lu\n", dataset.feature_vecs().size());
+    std::vector<FeatureVec> test_feature_vecs;
+    auto all_feature_vecs = dataset.feature_vecs();
+    for (int i = testset.first; i < testset.second; i++)
+        test_feature_vecs.push_back(all_feature_vecs[i]);
+
+    auto all_labels = dataset.labels();
+    std::vector<Label> test_labels;
+    for (int i = testset.first; i < testset.second; i++)
+        test_labels.push_back(all_labels[i]);
+    
+
+    std::vector<double> test_label_count(NUM_CLASSES, 0);
+    std::vector<double> test_label_freq(NUM_CLASSES, 0);
+    std::vector<double> per_label_accuracy(NUM_CLASSES, 0);
+    std::vector<std::vector<double> > confusion_matrix(NUM_CLASSES, std::vector<double>(NUM_CLASSES, 0));
+    double accuracy = 0.0;
+
+    // test
+    for (size_t i = 0; i < num_test; ++i) {
+        Label predicted_label = predictor_->predict(test_feature_vecs[i]);
+        test_label_count[test_labels[i]] += 1;
+        confusion_matrix[test_labels[i]][predicted_label] += 1;
+        if (predicted_label == test_labels[i])
+            per_label_accuracy[test_labels[i]] += 1;
+    }
+
+    for (size_t i = 0; i < NUM_CLASSES; ++i) {
+        if (test_label_count[i] > 0) {
+            accuracy += per_label_accuracy[i];
+            per_label_accuracy[i] /= test_label_count[i];
+        }
+        test_label_freq[i] = test_label_count[i]/num_test;
+    }
+    accuracy /= num_test;
+
+    double overall_per_label_acc = 0.0;
+    overall_per_label_acc = std::accumulate(per_label_accuracy.begin(), per_label_accuracy.end(), 0.0);
+    overall_per_label_acc /= per_label_accuracy.size();
+    return overall_per_label_acc;
+    // printf("\t\t\taccuracy on testset : %f\n", accuracy);
+    // return accuracy;
+}
+
+MultiClassPredictorParams ValidatorParams::getPredictorParams()
+{
+    MultiClassPredictorParams params;
+    params.lambda = lambda;
+    return params;
 }

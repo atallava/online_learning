@@ -14,6 +14,7 @@ namespace ol {
     class MultiClassLogistic : public MultiClassPredictor {
     public:
         // uniform prior for the weights
+        MultiClassLogistic(MultiClassPredictorParams params);
         MultiClassLogistic(int num_rounds, double lambda);
         Label predict(const FeatureVec& feature_vec);
         void pushData(const FeatureVec& feature_vec, Label label);

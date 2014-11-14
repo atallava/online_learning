@@ -7,7 +7,9 @@ using namespace std;
 
 #define APPROX true
 
-MultiClassKernelSVM::MultiClassKernelSVM(int num_rounds, double lambda) : lambda_(lambda) {
+MultiClassKernelSVM::MultiClassKernelSVM(MultiClassPredictorParams params)
+  :  lambda_(params.lambda) {
+
   alpha_.resize(NUM_CLASSES);
 #if APPROX
   best_alpha_.resize(NUM_CLASSES);
@@ -28,6 +30,22 @@ MultiClassKernelSVM::MultiClassKernelSVM(int num_rounds, double lambda) : lambda
   //gamma_ = 1000;
   gamma_ = 0.9;
 
+
+  double G_ = 1;
+  learning_rate_ = sqrt(std::log(NUM_FEATURES)/params.num_rounds)/G_;
+}
+
+MultiClassKernelSVM::MultiClassKernelSVM(int num_rounds, double lambda)
+  :  lambda_(lambda) {
+
+  alpha_.resize(NUM_CLASSES);
+#if APPROX
+  best_alpha_.resize(NUM_CLASSES);
+  num_alpha_used_ = 15;
+#endif
+  current_iteration_ = 0;
+
+  gamma_ = 10000;
 
   double G_ = 1;
   learning_rate_ = sqrt(std::log(NUM_FEATURES)/num_rounds)/G_;

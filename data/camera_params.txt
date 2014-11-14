@@ -1,0 +1,23 @@
+// am scene
+
+Clipping plane [near,far] 0.667405, 667.405
+Focal point [x,y,z] 333.539, 79.7573, -24.0705
+Position [x,y,z] 47.0035, 347.314, 71.6445
+View up [x,y,z] 0.119185, -0.218815, 0.96846
+Camera view angle [degrees] 49.1311
+Window size [x,y] 960, 1027
+Window position [x,y] 899, 112
+
+// an scene
+
+Clipping plane [near,far] 0.352814, 352.814
+Focal point [x,y,z] 333.539, 79.7573, -24.0705
+Position [x,y,z] 11.1799, 153.713, 18.8741
+View up [x,y,z] 0.0946536, -0.158154, 0.982867
+Camera view angle [degrees] 30
+Window size [x,y] 960, 540
+Window position [x,y] 817, 248
+
+
+
+

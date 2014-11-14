@@ -14,10 +14,11 @@ namespace ol {
         std::vector<Label> labels() const { return labels_; }
         std::vector<pcl::PointXYZ> points() const { return points_; }
         std::vector<FeatureVec> feature_vecs() const { return feature_vecs_; }
-	void shuffleData();
-  void balanceClasses();
-  void addRandomFeatures();
-  void addNoisyVersionsOfFeatures();
+        void shuffleData();
+        void balanceClasses();
+        void addRandomFeatures();
+        void addNoisyVersionsOfFeatures();
+        size_t size() const  { return feature_vecs_.size(); }  // should be the same as labels_.size() too
     private:
         std::vector<Label> labels_;
         std::vector<pcl::PointXYZ> points_;

@@ -6,6 +6,7 @@
 namespace ol {
   class ExpGradDescent : public Predictor {
   public:
+        ExpGradDescent(MultiClassPredictorParams params);
         ExpGradDescent(int num_rounds, double U);
         int predict(const FeatureVec& feature_vec, double& confidence);
         void pushData(const FeatureVec& feature_vec,  int label);

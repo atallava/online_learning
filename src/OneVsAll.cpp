@@ -5,6 +5,22 @@
 
 using namespace ol;
 
+OneVsAll::OneVsAll(std::string type, MultiClassPredictorParams params)
+{
+    // initialize the predictors based on the type
+    if (type.compare(std::string("logistic")) == 0){
+        for (int i = 0; i < NUM_CLASSES; i++)
+            binary_predictors_.push_back(std::make_shared<Logistic>(params));
+        binary_labels_ = Logistic::getBinaryLabels();
+    } else if (type.compare(std::string("exp")) == 0) {
+        for (int i = 0; i < NUM_CLASSES; i++)
+            binary_predictors_.push_back(std::make_shared<ExpGradDescent>(params));
+        binary_labels_ = ExpGradDescent::getBinaryLabels();
+    } else {
+        throw std::runtime_error("Can't find predictor");
+    }
+}
+
 OneVsAll::OneVsAll(int num_rounds, std::string type, double predictor_param)
 {
     // initialize the predictors based on the type
