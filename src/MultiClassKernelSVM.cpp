@@ -32,6 +32,11 @@ MultiClassKernelSVM::MultiClassKernelSVM(int num_rounds, double lambda) : lambda
 }
 
 void MultiClassKernelSVM::pushData(const FeatureVec& features, Label label){
+  if(current_iteration_>0){
+    Label predicted_label = predict(features);
+    updateStreamLogs(label, predicted_label);
+  }
+
   if(current_iteration_ % 10000 == 0){
     printf("data point %d\n",current_iteration_);
     printf("learning rate %f\n",1.0/(current_iteration_+1));
