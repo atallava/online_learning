@@ -72,10 +72,10 @@ int main(int argc, char** argv) {
         // cross validate logistic regression
         params.predictor_type = std::string("kernel_svm");
         params.train_file_name = std::string("data/oakland_part3_am_rf.node_features");
-        params.num_folds = 5;
+        params.num_folds = 3;
         params.num_training_passes = 1;
 
-        params.regularization.lower_limit = 1e-12;
+        params.regularization.lower_limit = 1e-15;
         params.regularization.upper_limit = 1e-5;
         params.regularization.num_points = 1;
 

@@ -27,13 +27,12 @@ ValidatorParams CrossValidator::getBestParameter()
     double best_accuracy = 0.0;
     ValidatorParams best_params;
     // validator_params.lambda = params_.regularization.lower_limit/10;
-    validator_params.lambda = params_.regularization.lower_limit/10;
+    validator_params.lambda = params_.regularization.lower_limit;
     for (int i = 0; validator_params.lambda < params_.regularization.upper_limit; i++) {
         // uniform search for now on a logarithmic scale
         // validator_params.lambda = params_.regularization.lower_limit +
         //     i*(params_.regularization.upper_limit -
         //     params_.regularization.lower_limit)/params_.regularization.num_points;
-        validator_params.lambda *= 10;
         double accuracy = averageAccuracyForParameters(validator_params);
         if (best_accuracy < accuracy) {
             best_accuracy = accuracy;
@@ -41,6 +40,7 @@ ValidatorParams CrossValidator::getBestParameter()
         }
         printf("\nevaluated lambda : %f at %f\n\n\n", validator_params.lambda,
             accuracy);
+        validator_params.lambda *= 1000;
     }
     return best_params;
 }
