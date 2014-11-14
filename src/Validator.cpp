@@ -55,10 +55,10 @@ double Validator::validate(std::string train_file_name, std::string test_file_na
     MultiClassPredictor* mcp = trainPredictor(train_feature_vecs, train_labels, predictor_type, predictor_param,
 					      adjust_for_under_represented_classes, num_training_passes);
     std::clock_t end = std::clock();
+    double elapsed_time = double(end-begin)/CLOCKS_PER_SEC;
 
     if (print_choice) {
 	std::cout << "Predictor: " << predictor_type << "\n\n";
-	double elapsed_time = double(end-begin)/CLOCKS_PER_SEC;
 	printf("Training time (CPU): %0.2fs\n\n", elapsed_time);
 	mcp->printStreamLogs();
 	std::cout << std::string(50,'-') << std::endl;
@@ -72,7 +72,13 @@ double Validator::validate(std::string train_file_name, std::string test_file_na
     // 			train_dset.points(), predicted_labels);
     // }
 
+    begin = std::clock();    
     double accuracy = testPredictor(test_feature_vecs, test_labels, mcp, print_choice);
+    end = std::clock();
+    elapsed_time = double(end-begin)/CLOCKS_PER_SEC;
+	
+    if (print_choice) 
+	printf("Test time (CPU): %0.2fs\n\n", elapsed_time);
 
     // visualize test pcd
     if (viz_choice) {
