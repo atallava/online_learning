@@ -25,7 +25,7 @@ ValidatorParams CrossValidator::getBestParameter()
     double best_lambda;
     double best_accuracy = 0.0;
     ValidatorParams best_params;
-    for (int i = 0; i < params_.regularization.num_points) {
+    for (int i = 0; i < params_.regularization.num_points; i++) {
         // uniform search for now
         validator_params.lambda = params_.regularization.lower_limit +
             i*(params_.regularization.upper_limit -
@@ -43,7 +43,7 @@ ValidatorParams CrossValidator::getBestParameter()
 double CrossValidator::averageAccuracyForParameters(ValidatorParams
     validator_params)
 {
-    double fold_accuracies(params_.num_folds, 0.0);
+    std::vector<double> fold_accuracies(params_.num_folds, 0.0);
     // Pass in the training and test points and
     // get average accuracy.
     for (int i = 0; i < params_.num_folds; i++) {

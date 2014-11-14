@@ -33,6 +33,22 @@ MultiClassKernelSVM::MultiClassKernelSVM(MultiClassPredictorParams params)
   learning_rate_ = sqrt(std::log(NUM_FEATURES)/params.num_rounds)/G_;
 }
 
+MultiClassKernelSVM::MultiClassKernelSVM(int num_rounds, double lambda)
+  :  lambda_(lambda) {
+
+  alpha_.resize(NUM_CLASSES);
+#if APPROX
+  best_alpha_.resize(NUM_CLASSES);
+  num_alpha_used_ = 15;
+#endif
+  current_iteration_ = 0;
+
+  gamma_ = 10000;
+
+  double G_ = 1;
+  learning_rate_ = sqrt(std::log(NUM_FEATURES)/num_rounds)/G_;
+}
+
 void MultiClassKernelSVM::pushData(const FeatureVec& features, Label label){
   if(current_iteration_>0){
     Label predicted_label = predict(features);

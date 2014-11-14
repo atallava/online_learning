@@ -5,7 +5,8 @@ namespace ol {
 
 class MultiClassSVM: public MultiClassPredictor{
   public:
-	MultiClassSVM(MultiClassPredictorParams params);
+    MultiClassSVM(MultiClassPredictorParams params);
+    MultiClassSVM(int num_rounds, double lambda);
 	Label predict(const FeatureVec& feature_vec);
 	void pushData(const FeatureVec& feature_vec, Label label);
     private:

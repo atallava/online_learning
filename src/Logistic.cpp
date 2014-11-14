@@ -10,6 +10,12 @@ Logistic::Logistic(MultiClassPredictorParams params)
         current_iteration_(0)
 {}
 
+Logistic::Logistic(int num_rounds, double lambda)
+    :   num_rounds_(num_rounds),
+        weights_(NUM_FEATURES, 1.0/static_cast<double>(NUM_FEATURES)),
+        current_iteration_(0)
+{}
+
 std::pair<int,int> Logistic::getBinaryLabels()
 {
     return std::make_pair(0,1);

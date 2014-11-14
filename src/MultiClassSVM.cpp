@@ -4,6 +4,14 @@
 
 using namespace ol;
 
+MultiClassSVM::MultiClassSVM(int num_rounds, double lambda)
+  : lambda_(lambda) {
+  weights_.resize(NUM_CLASSES);
+  for(unsigned int i=0; i<weights_.size(); i++)
+    weights_[i].resize(NUM_FEATURES, 1.0/NUM_FEATURES);
+  current_iteration_ = 0;
+}
+
 MultiClassSVM::MultiClassSVM(MultiClassPredictorParams params) : lambda_(params.lambda) {
   weights_.resize(NUM_CLASSES);
   for(unsigned int i=0; i<weights_.size(); i++)

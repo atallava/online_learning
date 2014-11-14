@@ -2,6 +2,7 @@
 #include <vector>
 
 #include <ol/Dataset.h>
+#include <ol/MultiClassPredictor.h>
 
 namespace ol {
     class Predictor {

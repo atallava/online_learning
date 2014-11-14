@@ -7,7 +7,8 @@
 namespace ol {
 class MultiClassExp : public MultiClassPredictor {
     public:
-	MultiClassExp(MultiClassPredictorParams params);
+    MultiClassExp(MultiClassPredictorParams params);
+	MultiClassExp(int num_rounds, double U);
 	Label predict(const FeatureVec& feature_vec);
 	void pushData(const FeatureVec& feature_vec, Label label);
 	double getConfidence(const FeatureVec& feature_vec, const std::vector<double>& weights_plus, const std::vector<double>& weights_minus);

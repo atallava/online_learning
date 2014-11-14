@@ -280,7 +280,7 @@ void Validator::trainPredictor(const Dataset& dataset, std::pair<int,int>
         // skip the testset
         if (i >= testset.first && i < testset.second)
             continue;
-        predictor_->pushData(features[i], train_labels[i]);
+        predictor_->pushData(features[i], labels[i]);
       }
     }
 }
