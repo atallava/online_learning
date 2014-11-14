@@ -4,8 +4,8 @@
 
 using namespace ol;
 
-Logistic::Logistic(int num_rounds, double lambda)
-    :   num_rounds_(num_rounds),
+Logistic::Logistic(MultiClassPredictorParams params)
+    :   num_rounds_(params.num_rounds),
         weights_(NUM_FEATURES, 1.0/static_cast<double>(NUM_FEATURES)),
         current_iteration_(0)
 {}
@@ -19,7 +19,7 @@ void Logistic::pushData(const FeatureVec& features, int label)
 {
     current_iteration_++;
     // set the learning rate adaptively
-    learning_rate_ = static_cast<double>(1.0/current_iteration_);
+    learning_rate_ = static_cast<double>(1.0/std::sqrt(current_iteration_));
     // compute w^T*x
     double w_t_x = std::inner_product(weights_.begin(), weights_.end(),
         features.begin(), 0);

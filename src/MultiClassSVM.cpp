@@ -4,7 +4,7 @@
 
 using namespace ol;
 
-MultiClassSVM::MultiClassSVM(int num_rounds, double lambda) : lambda_(lambda) {
+MultiClassSVM::MultiClassSVM(MultiClassPredictorParams params) : lambda_(params.lambda) {
   weights_.resize(NUM_CLASSES);
   for(unsigned int i=0; i<weights_.size(); i++)
     weights_[i].resize(NUM_FEATURES, 1.0/NUM_FEATURES);
@@ -21,7 +21,7 @@ MultiClassSVM::MultiClassSVM(int num_rounds, double lambda) : lambda_(lambda) {
   //lambda_ = 0.0001;
 
   //double G_ = 1;
-  //learning_rate_ = sqrt(std::log(NUM_FEATURES)/num_rounds)/G_;
+  //learning_rate_ = sqrt(std::log(NUM_FEATURES)/params.num_rounds)/G_;
 }
 
 void MultiClassSVM::pushData(const FeatureVec& features, Label label){
@@ -44,7 +44,8 @@ void MultiClassSVM::pushData(const FeatureVec& features, Label label){
       continue;
     double wf_correct = std::inner_product(weights_[label].begin(), weights_[label].end(),
         features.begin(), 0.0);
-    double wf_incorrect = std::inner_product(weights_[i].begin(), weights_[i].end(),
+    double wf_incorrect = std::inner_product(weights_[i].begin(), weights_
+      [i].end(),
         features.begin(), 0.0);
     //if not correct by a margin, apply adjustment
     if(wf_correct < wf_incorrect + 1){

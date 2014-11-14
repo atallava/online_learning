@@ -9,12 +9,13 @@
 
 using namespace ol;
 
-ExpGradDescent::ExpGradDescent(int num_rounds, double U) : U_(U),
+ExpGradDescent::ExpGradDescent(MultiClassPredictorParams params) : U_
+                        (params.lambda),
 						 G_(1)
 {
     weights_plus_ = std::vector<double>(NUM_FEATURES, 0.5*U_/static_cast<double>(NUM_FEATURES));
     weights_minus_ = std::vector<double>(NUM_FEATURES, 0.5*U_/static_cast<double>(NUM_FEATURES));
-    learning_rate_ = sqrt(std::log(NUM_FEATURES)/num_rounds)/G_;
+    learning_rate_ = sqrt(std::log(NUM_FEATURES)/params.num_rounds)/G_;
 }
 
 int ExpGradDescent::predict(const FeatureVec& feature_vec, double& confidence) 

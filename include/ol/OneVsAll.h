@@ -13,7 +13,7 @@
 namespace ol {
     class OneVsAll : public MultiClassPredictor{
     public:
-        OneVsAll(int num_rounds, std::string type, double predictor_param);
+        OneVsAll(std::string type, MultiClassPredictorParams params);
         Label predict(const FeatureVec& feature_vec);
         void pushData(const FeatureVec& feature_vec, Label label);
     private:

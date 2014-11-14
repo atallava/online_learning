@@ -65,8 +65,8 @@ add_library(ol SHARED 	src/Dataset.cpp
                         src/OneVsAll.cpp
 
                         src/Validator.cpp
-			src/CrossValidator.cpp
-                        src/Test.cpp 
+						src/CrossValidator.cpp
+                        src/Test.cpp
                   	)
 
 set_target_properties(ol PROPERTIES OUTPUT_NAME ol)
@@ -76,6 +76,9 @@ target_link_libraries(ol ${OL_LIBRARIES})
 # Add files here to make executables out of them
 add_executable(run_tests src/run_tests.cpp)
 target_link_libraries(run_tests ol ${OL_LIBRARIES})
+
+add_executable(cross_validate src/cross_validate.cpp)
+target_link_libraries(cross_validate ol ${OL_LIBRARIES})
 
 # add_subdirectory( src )
 

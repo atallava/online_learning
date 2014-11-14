@@ -4,11 +4,11 @@
 
 using namespace ol;
 
-MultiClassLogistic::MultiClassLogistic(int num_rounds, double lambda)
-    :   num_rounds_(num_rounds),
+MultiClassLogistic::MultiClassLogistic(MultiClassPredictorParams params)
+    :   num_rounds_(params.num_rounds),
         weights_(NUM_CLASSES - 1),  // one less because it is normalized
         current_iteration_(0),
-        lambda_(lambda)
+        lambda_(params.lambda)
 {
     std::for_each(weights_.begin(), weights_.end(), [](std::vector<double>& w){
         w.resize(NUM_FEATURES, 1/NUM_FEATURES);

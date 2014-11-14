@@ -41,7 +41,6 @@ double Validator::validate(std::string train_file_name, std::string test_file_na
 			   int num_training_passes)
 {
     Dataset train_dset(train_file_name);
-    //train_dset.whitenData();
     train_dset.shuffleData();
     Dataset test_dset(test_file_name);
 
@@ -254,4 +253,86 @@ double Validator::testPredictor(std::vector<FeatureVec> test_feature_vecs,
     }
 
     return accuracy;
+}
+
+void Validator::trainPredictor(const Dataset& dataset, std::pair<int,int>
+    testset,std::string predictor_type, ValidatorParams params)
+{
+    std::vector<FeatureVec> features = dataset.feature_vecs();
+    std::vector<Label> labels = dataset.labels();
+
+    // transform the params to the multi class params
+    auto predictor_params = params.getPredictorParams();
+    predictor_params.num_rounds = dataset.size() -
+                                  (testset.second - testset.first);
+
+    // create the right instances
+    if (predictor_type.compare(std::string("svm")) == 0)
+        predictor_.reset(new MultiClassSVM(predictor_params));
+    else if (predictor_type.compare(std::string("kernel_svm")) == 0)
+        predictor_.reset(new MultiClassKernelSVM(predictor_params));
+    else if (predictor_type.compare(std::string("multiexp")) == 0)
+        predictor_.reset(new MultiClassExp(predictor_params));
+    else if (predictor_type.compare(std::string("multilog")) == 0)
+        predictor_.reset(new MultiClassLogistic(predictor_params));
+    else
+        predictor_.reset(new OneVsAll(predictor_type, predictor_params));
+    
+    printf("training with %d passes through the data\n",
+                            params.num_training_passes);
+    std::cout << std::string(50,'-') << std::endl;
+
+    // train!
+    for(int k=0; k<params.num_training_passes; k++) {
+      for (size_t i = 0; i < dataset.size(); ++i) {
+        // skip the testset
+        if (i >= testset.first && i < testset.second)
+            continue;
+        predictor_->pushData(features[i], train_labels[i]);
+      }
+    }
+}
+
+double Validator::testPredictor(const Dataset& dataset, std::pair<int,int>
+    testset)
+{
+    size_t num_test = testset.second - testset.first;
+
+    std::vector<FeatureVec> test_feature_vecs(
+                    dataset.feature_vecs().begin() + testset.first,
+                    dataset.feature_vecs().begin() + testset.second);
+    std::vector<Label> test_labels(dataset.labels().begin() + testset.first,
+                                   dataset.labels().begin() + testset.second);
+
+    std::vector<double> test_label_count(NUM_CLASSES, 0);
+    std::vector<double> test_label_freq(NUM_CLASSES, 0);
+    std::vector<double> per_label_accuracy(NUM_CLASSES, 0);
+    std::vector<std::vector<double> > confusion_matrix(NUM_CLASSES, std::vector<double>(NUM_CLASSES, 0));
+    double accuracy = 0.0;
+
+    // test
+    for (size_t i = 0; i < num_test; ++i) {
+        Label predicted_label = predictor_->predict(test_feature_vecs[i]);
+        test_label_count[test_labels[i]] += 1;
+        confusion_matrix[test_labels[i]][predicted_label] += 1;
+        if (predicted_label == test_labels[i])
+            per_label_accuracy[test_labels[i]] += 1;
+    }
+
+    for (size_t i = 0; i < NUM_CLASSES; ++i) {
+        if (test_label_count[i] > 0) {
+            accuracy += per_label_accuracy[i];
+            per_label_accuracy[i] /= test_label_count[i];
+        }
+        test_label_freq[i] = test_label_count[i]/num_test;
+    }
+    accuracy /= num_test;
+    return accuracy;
+}
+
+MultiClassPredictorParams ValidatorParams::getPredictorParams()
+{
+    MultiClassPredictorParams params;
+    params.lambda = lambda;
+    // convert other parameters as required
 }

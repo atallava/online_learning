@@ -5,6 +5,12 @@
 
 namespace ol {
 
+    struct MultiClassPredictorParams {
+        int num_rounds;
+        double lambda;  // regularization
+        // add more params here for the individual implementations
+    };
+
     class MultiClassPredictor {
     public:
 	MultiClassPredictor();

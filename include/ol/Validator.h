@@ -7,6 +7,13 @@
 #include <ol/Visualizer.h>
 
 namespace ol {
+    
+    struct ValidatorParams{
+        int num_training_passes;
+        double lambda;  // regularization parameter
+        MultiClassPredictorParams getPredictorParams();
+    };
+
     class Validator {
     public:
         Validator() : single_scene_num_train_(10), single_scene_num_test_(1) {}
@@ -37,9 +44,15 @@ namespace ol {
 	double testPredictor(std::vector<FeatureVec> test_feature_vecs,
 			     std::vector<Label> test_labels,
 			     MultiClassPredictor* mcp, bool print_choice);
-					    
+
+    // added for the cross validation features
+    void trainPredictor(const Dataset& dataset, std::pair<int,int> testset, std::string predictor_type, ValidatorParams params);
+    double testPredictor(const Dataset& dataset, std::pair<int,int> testset);
+
+
     private:
         size_t single_scene_num_train_;
         size_t single_scene_num_test_;
+        std::shared_ptr<MultiClassPredictor> predictor_;
     };
 }
