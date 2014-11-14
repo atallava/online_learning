@@ -15,6 +15,7 @@ namespace ol {
         std::vector<pcl::PointXYZ> points() const { return points_; }
         std::vector<FeatureVec> feature_vecs() const { return feature_vecs_; }
 	void shuffleData();
+  void balanceClasses();
     private:
         std::vector<Label> labels_;
         std::vector<pcl::PointXYZ> points_;
