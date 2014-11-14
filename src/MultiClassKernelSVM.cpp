@@ -11,7 +11,7 @@ MultiClassKernelSVM::MultiClassKernelSVM(int num_rounds, double lambda) : lambda
   alpha_.resize(NUM_CLASSES);
 #if APPROX
   best_alpha_.resize(NUM_CLASSES);
-  num_alpha_used_ = 15;
+  num_alpha_used_ = 20;
 #endif
   current_iteration_ = 0;
 
@@ -23,8 +23,10 @@ MultiClassKernelSVM::MultiClassKernelSVM(int num_rounds, double lambda) : lambda
   lambda_ = params[run];
   run++;
   */
-  //lambda_ = 0.0001;
-  gamma_ = 10000;
+  //lambda_ = 0.000000000001;
+  //lambda_ = 0.0;
+  //gamma_ = 1000;
+  gamma_ = 0.9;
 
 
   double G_ = 1;
@@ -39,7 +41,8 @@ void MultiClassKernelSVM::pushData(const FeatureVec& features, Label label){
 
   if(current_iteration_ % 10000 == 0){
     printf("data point %d\n",current_iteration_);
-    printf("learning rate %f\n",1.0/(current_iteration_+1));
+    //printf("learning rate %f\n",1.0/(current_iteration_+1));
+    /*
     printf("best alphas\n");
     for(unsigned int i=0; i<best_alpha_.size(); i++){
       printf("class %d: ", i);
@@ -47,8 +50,10 @@ void MultiClassKernelSVM::pushData(const FeatureVec& features, Label label){
         printf("(%d, %f) ", it->first, it->second);
       printf("\n");
     }
-    std::cin.get();
+    */
+    //std::cin.get();
   }
+
   current_iteration_++;
   // set the learning rate adaptively
   //learning_rate_ = static_cast<double>(1.0/current_iteration_);

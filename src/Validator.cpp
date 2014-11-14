@@ -46,6 +46,11 @@ double Validator::validate(std::string train_file_name, std::string test_file_na
     train_dset.shuffleData();
     Dataset test_dset(test_file_name);
 
+    //train_dset.addRandomFeatures();
+    //test_dset.addRandomFeatures();
+    //train_dset.addNoisyVersionsOfFeatures();
+    //test_dset.addNoisyVersionsOfFeatures();
+
     // form train and test
     std::vector<FeatureVec> train_feature_vecs = train_dset.feature_vecs();
     std::vector<Label> train_labels = train_dset.labels();

@@ -4,6 +4,8 @@
 #include <ol/Dataset.h>
 #include <stdexcept>
 
+#include <random>
+
 using namespace ol;
 
 Dataset::Dataset(std::string file_name) 
@@ -132,6 +134,42 @@ void Dataset::balanceClasses(){
   labels_ = tmp_labels;
   points_= tmp_points;
   feature_vecs_ = tmp_feature_vecs;
+}
+
+void Dataset::addRandomFeatures(){
+  for(unsigned int i=0; i<feature_vecs_.size(); i++){
+    for(int j=0; j<90; j++){
+      feature_vecs_[i].push_back(rand()%100);
+    }
+  }
+}
+
+void Dataset::addNoisyVersionsOfFeatures(){
+  std::vector<double> feature_min(feature_vecs_[0].size(),std::numeric_limits<double>::max());
+  std::vector<double> feature_max(feature_vecs_[0].size(),std::numeric_limits<double>::min());
+  for(unsigned int i=0; i<feature_vecs_.size(); i++){
+    for(unsigned int j=0; j<feature_vecs_[i].size(); j++){
+      if(feature_vecs_[i][j] < feature_min[j])
+        feature_min[j] = feature_vecs_[i][j];
+      if(feature_vecs_[i][j] > feature_max[j])
+        feature_max[j] = feature_vecs_[i][j];
+    }
+  }
+
+  std::default_random_engine generator;
+  std::vector<std::normal_distribution<double> > gaussians;
+  for(int i=0; i<9; i++)
+    gaussians.push_back(std::normal_distribution<double>(0.0, 
+          0.1*(feature_max[i]-feature_min[i])));
+
+  for(unsigned int i=0; i<feature_vecs_.size(); i++){
+    for(int j=0; j<10; j++){
+      for(int k=0; k<9; k++){
+        double noise = gaussians[k](generator);
+        feature_vecs_[i].push_back(feature_vecs_[i][k] + noise);
+      }
+    }
+  }
 }
 
 

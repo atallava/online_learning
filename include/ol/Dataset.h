@@ -16,6 +16,8 @@ namespace ol {
         std::vector<FeatureVec> feature_vecs() const { return feature_vecs_; }
 	void shuffleData();
   void balanceClasses();
+  void addRandomFeatures();
+  void addNoisyVersionsOfFeatures();
     private:
         std::vector<Label> labels_;
         std::vector<pcl::PointXYZ> points_;
