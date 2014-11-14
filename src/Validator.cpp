@@ -278,9 +278,11 @@ void Validator::trainPredictor(const Dataset& dataset, std::pair<int,int>
     for(int k=0; k<params.num_training_passes; k++) {
       for (size_t i = 0; i < dataset.size(); ++i) {
         // skip the testset
-        if (i >= testset.first && i < testset.second)
-            continue;
-        predictor_->pushData(features[i], labels[i]);
+        if (i >= testset.first && i < testset.second) {
+            ;
+        } else { 
+            predictor_->pushData(features[i], labels[i]);
+        }
       }
     }
 }
@@ -289,12 +291,19 @@ double Validator::testPredictor(const Dataset& dataset, std::pair<int,int>
     testset)
 {
     size_t num_test = testset.second - testset.first;
+    // printf("num test %d: %d %d\n", num_test, testset.first, testset.second);
 
-    std::vector<FeatureVec> test_feature_vecs(
-                    dataset.feature_vecs().begin() + testset.first,
-                    dataset.feature_vecs().begin() + testset.second);
-    std::vector<Label> test_labels(dataset.labels().begin() + testset.first,
-                                   dataset.labels().begin() + testset.second);
+    // printf("size of featurevecs : %lu\n", dataset.feature_vecs().size());
+    std::vector<FeatureVec> test_feature_vecs;
+    auto all_feature_vecs = dataset.feature_vecs();
+    for (int i = testset.first; i < testset.second; i++)
+        test_feature_vecs.push_back(all_feature_vecs[i]);
+
+    auto all_labels = dataset.labels();
+    std::vector<Label> test_labels;
+    for (int i = testset.first; i < testset.second; i++)
+        test_labels.push_back(all_labels[i]);
+    
 
     std::vector<double> test_label_count(NUM_CLASSES, 0);
     std::vector<double> test_label_freq(NUM_CLASSES, 0);
@@ -319,12 +328,18 @@ double Validator::testPredictor(const Dataset& dataset, std::pair<int,int>
         test_label_freq[i] = test_label_count[i]/num_test;
     }
     accuracy /= num_test;
-    return accuracy;
+
+    double overall_per_label_acc = 0.0;
+    overall_per_label_acc = std::accumulate(per_label_accuracy.begin(), per_label_accuracy.end(), 0.0);
+    overall_per_label_acc /= per_label_accuracy.size();
+    return overall_per_label_acc;
+    // printf("\t\t\taccuracy on testset : %f\n", accuracy);
+    // return accuracy;
 }
 
 MultiClassPredictorParams ValidatorParams::getPredictorParams()
 {
     MultiClassPredictorParams params;
     params.lambda = lambda;
-    // convert other parameters as required
+    return params;
 }

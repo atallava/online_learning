@@ -6,12 +6,14 @@ using namespace ol;
 
 CrossValidator::CrossValidator(CrossValidatorParams params)
     :   params_(params),
-        validator_(),
+        validator_(new Validator()),
         train_dataset_(params.train_file_name)
 {
     // modify the dataset as necessary
     train_dataset_.balanceClasses();
     train_dataset_.shuffleData();
+    printf("[CrossValidator] Received dataset of size : %lu\n",
+        train_dataset_.size());
 }
 
 
@@ -22,20 +24,23 @@ ValidatorParams CrossValidator::getBestParameter()
     // average accuracy
     auto validator_params = params_.getValidatorParams();
     // implement only regularization for now.
-    double best_lambda;
     double best_accuracy = 0.0;
     ValidatorParams best_params;
-    for (int i = 0; i < params_.regularization.num_points; i++) {
-        // uniform search for now
-        validator_params.lambda = params_.regularization.lower_limit +
-            i*(params_.regularization.upper_limit -
-            params_.regularization.lower_limit)/params_.regularization.num_points;
+    // validator_params.lambda = params_.regularization.lower_limit/10;
+    validator_params.lambda = params_.regularization.lower_limit/10;
+    for (int i = 0; validator_params.lambda < params_.regularization.upper_limit; i++) {
+        // uniform search for now on a logarithmic scale
+        // validator_params.lambda = params_.regularization.lower_limit +
+        //     i*(params_.regularization.upper_limit -
+        //     params_.regularization.lower_limit)/params_.regularization.num_points;
+        validator_params.lambda *= 10;
         double accuracy = averageAccuracyForParameters(validator_params);
         if (best_accuracy < accuracy) {
             best_accuracy = accuracy;
             best_params = validator_params;
         }
-        printf("evaluated lambda : %f at %f\n", validator_params.lambda, accuracy);
+        printf("\nevaluated lambda : %f at %f\n\n\n", validator_params.lambda,
+            accuracy);
     }
     return best_params;
 }
@@ -47,16 +52,26 @@ double CrossValidator::averageAccuracyForParameters(ValidatorParams
     // Pass in the training and test points and
     // get average accuracy.
     for (int i = 0; i < params_.num_folds; i++) {
-        printf("\tfold number : %d\n", i);
         // get the test chunk indices
         auto testset = getTestFoldIndices(i);
+        
+        // printf("\tfold number : %d : test indices are : %d\t%d\n", i,
+        //     testset.first, testset.second);
         // todo : implement this format
         validator_->trainPredictor(train_dataset_, testset,
             params_.predictor_type, validator_params);
         fold_accuracies[i] = validator_->testPredictor(train_dataset_, testset);
+        printf("\tfold number : %d : accuracy : %f\n", fold_accuracies[i]);
     }
-    return std::accumulate(fold_accuracies.begin(), fold_accuracies.end(),
-        0.0)/fold_accuracies.size();
+    double average_accuracy = 0.0;
+    std::for_each(fold_accuracies.begin(), fold_accuracies.end(),
+        [&average_accuracy](double a) {
+            average_accuracy += a;
+        });
+    average_accuracy/=fold_accuracies.size();
+    return average_accuracy;
+    // return std::accumulate(fold_accuracies.begin(), fold_accuracies.end(),
+    //     0.0)/fold_accuracies.size();
 }
 
 // fold_id must be 0 to num_folds - 1
@@ -84,4 +99,5 @@ ValidatorParams CrossValidatorParams::getValidatorParams()
 {
     ValidatorParams validator_params;
     validator_params.num_training_passes = num_training_passes;
+    return validator_params;
 }
