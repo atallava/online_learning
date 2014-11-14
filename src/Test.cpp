@@ -15,7 +15,7 @@ bool Test::testVizPCD(std::string file_name)
 
 bool Test::testVizPoints()
 {
-    std::string file_name = "data/oakland_part3_am_rf.node_features";
+    std::string file_name = "data/oakland_part3_an_rf.node_features";
     Dataset d(file_name);
     Visualizer viz;
     viz.visualize(d.points(),d.labels());

@@ -79,6 +79,7 @@ Label Dataset::mapRawLabelToLabel(int raw_label)
 
 void Dataset::shuffleData() 
 {
+  printf("shuffling data\n");
     std::vector<int> ids;
     for (size_t i = 0; i < labels_.size(); ++i)
 	ids.push_back(i);
@@ -95,3 +96,43 @@ void Dataset::shuffleData()
 	feature_vecs_[i] = tmp_feature_vecs[ids[i]];
     }
 }
+
+void Dataset::balanceClasses(){
+  int num_classes = 5;
+  std::vector<int> label_count(num_classes, 0);
+  std::vector<double> class_weight(num_classes, 0);
+  std::vector<int> class_duplicates(num_classes, 1);
+
+  printf("adjusting for underrepresented classes...\n");
+  for(unsigned int i=0; i<labels_.size(); ++i)
+    label_count[labels_[i]]++;
+  double min_weight = std::numeric_limits<double>::max();
+  for(unsigned int i=0; i<num_classes; ++i){
+    class_weight[i] = double(feature_vecs_.size())/num_classes/label_count[i];
+    if(class_weight[i] < min_weight)
+      min_weight = class_weight[i];
+  }
+  for(int i=0; i<num_classes; ++i){
+    class_duplicates[i] = round(class_weight[i] / min_weight);
+    //printf("    class %lu accounts for %f of the training data and will be repeated %d times\n",
+        //i, double(train_label_count[i])/num_train, class_iterations[i]);
+  }
+
+  std::vector<Label> tmp_labels;
+  std::vector<pcl::PointXYZ> tmp_points;
+  std::vector<FeatureVec> tmp_feature_vecs;
+  for(unsigned int i=0; i<labels_.size(); i++){
+    for(int j=0; j<class_duplicates[labels_[i]]; j++){
+      tmp_labels.push_back(labels_[i]);
+      tmp_points.push_back(points_[i]);
+      tmp_feature_vecs.push_back(feature_vecs_[i]);
+    }
+  }
+
+  labels_ = tmp_labels;
+  points_= tmp_points;
+  feature_vecs_ = tmp_feature_vecs;
+}
+
+
+

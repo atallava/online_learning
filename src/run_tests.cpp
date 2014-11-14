@@ -6,7 +6,6 @@ using namespace ol;
 int main() {
     Test t = Test();
     //t.testVizPCD("data/am.pcd");
-    //t.testDataset("data/oakland_part3_am_rf.node_features");
     //t.testVizPoints();
 
     std::string train_file_name ("data/oakland_part3_am_rf.node_features");
@@ -22,13 +21,12 @@ int main() {
     //MultiLog,      true,  3, lambda_ = 0.0001
     //KernelSVM, ?, ?, ?
 
-    // t.validatePredictor(train_file_name, test_file_name, "logistic", 0.0001, false, 3); 
-    //t.validatePredictor(train_file_name, test_file_name, "multilog", 0.0001, true, 4); 
+    t.validatePredictor(train_file_name, test_file_name, "logistic", 0.0001, false, 3); 
+    t.validatePredictor(train_file_name, test_file_name, "multilog", 0.0001, true, 4); 
 
-    //t.validatePredictor(train_file_name, test_file_name, "exp", 5, false, 3);
+    t.validatePredictor(train_file_name, test_file_name, "exp", 5, false, 3);
     t.validatePredictor(train_file_name, test_file_name, "multiexp", 5, true, 4);
 
-    //t.validatePredictor(train_file_name, test_file_name, "svm", 0.0001, true, 4);
-    //t.validatePredictor(train_file_name, test_file_name, "kernel_svm", 0.0001, true, 1);
-
+    t.validatePredictor(train_file_name, test_file_name, "svm", 0.0001, true, 4);
+    t.validatePredictor(train_file_name, test_file_name, "kernel_svm", 0.0001, true, 1);
 }

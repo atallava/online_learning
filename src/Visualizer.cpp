@@ -19,11 +19,17 @@ void Visualizer::visualize(std::vector<pcl::PointXYZ> points, std::vector<Label>
 void Visualizer::visualize(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud)
 {
     pcl::visualization::PCLVisualizer viewer("viz");
+
     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(cloud);
     viewer.addPointCloud<pcl::PointXYZRGB>(cloud, rgb, "cloud");
     viewer.addCoordinateSystem(1.0);
-    viewer.initCameraParameters();
-    viewer.setCameraPosition(180,180,0,0,0,1);
+    // am scene
+    //viewer.setCameraPosition(47.0035, 347.314, 71.6445, 333.539, 79.7573, -24.0705, 0.119185, -0.218815, 0.96846);
+    // an scene
+    viewer.setCameraPosition(11.1799, 153.713, 18.8741, 333.539, 79.7573, -24.0705, 0.0946536, -0.158154, 0.982867);
+    
+    if (write_to_file_)
+	viewer.saveScreenshot(file_name_);
 
     while (!viewer.wasStopped()) {
         viewer.spinOnce(100);
@@ -59,7 +65,8 @@ void Visualizer::visualize(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_1,
   viewer.addPointCloud(cloud_2, rgb_2, "cloud_2", v2);
 
   viewer.addCoordinateSystem(1.0);
-  viewer.setCameraPosition(180,180,0,0,0,1);
+  // an scene
+  viewer.setCameraPosition(11.1799, 153.713, 18.8741, 333.539, 79.7573, -24.0705, 0.0946536, -0.158154, 0.982867);
 
   while (!viewer.wasStopped()) {
     viewer.spinOnce(100);
@@ -111,4 +118,15 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr Visualizer::pointsToPCD(std::vector<pcl::
     }
     
     return cloud;
+}
+
+void Visualizer::setFileLocation(std::string file_name)
+{
+    file_name_.assign(file_name);
+    write_to_file_ = true;
+}
+
+void Visualizer::disableWriteToFile()
+{
+    write_to_file_ = false;
 }

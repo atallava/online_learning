@@ -31,7 +31,7 @@ void MultiClassSVM::pushData(const FeatureVec& features, Label label){
 
   current_iteration_++;
   // set the learning rate adaptively
-  learning_rate_ = static_cast<double>(1.0/current_iteration_);
+  learning_rate_ = static_cast<double>(1.0/sqrt(current_iteration_));
 
   //regularization
   for(unsigned int i=0; i<weights_.size(); i++)

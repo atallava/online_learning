@@ -18,6 +18,7 @@ namespace ol {
         std::vector<FeatureVec>& feature_vecs() const { return feature_vecs_; }
         void shuffleData();
         size_t size() { return feature_vecs_.size(); }  // should be the same as labels_.size() too
+        void balanceClasses();
     private:
         std::vector<Label> labels_;
         std::vector<pcl::PointXYZ> points_;
