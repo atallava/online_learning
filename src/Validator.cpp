@@ -73,21 +73,22 @@ double Validator::validate(std::string train_file_name, std::string test_file_na
     // 			train_dset.points(), predicted_labels);
     // }
 
-    begin = std::clock();    
     double accuracy = testPredictor(test_feature_vecs, test_labels, mcp, print_choice);
-    end = std::clock();
-    elapsed_time = double(end-begin)/CLOCKS_PER_SEC;
 	
-    if (print_choice) 
-	printf("Test time (CPU): %0.2fs\n\n", elapsed_time);
-
     // visualize test pcd
     if (viz_choice) {
       printf("visualize!\n");
 	std::vector<Label> predicted_labels = getPredictedLabels(test_feature_vecs, mcp);
 	Visualizer vizer;
-	vizer.visualize(test_dset.points(), test_labels,
-			test_dset.points(), predicted_labels);
+	// visualize ground truth and predictions side-by-side
+	// vizer.visualize(test_dset.points(), test_labels,
+	// 		test_dset.points(), predicted_labels);
+
+	std::string file_name;
+	file_name = "pcl_viz/" + predictor_type + "_test.png";
+	vizer.setFileLocation(file_name);
+	// visualize only predictions; write to disk
+	vizer.visualize(test_dset.points(), predicted_labels);
     }
 
     delete mcp;
@@ -186,6 +187,7 @@ double Validator::testPredictor(std::vector<FeatureVec> test_feature_vecs,
 				std::vector<Label> test_labels,
 				MultiClassPredictor* mcp, bool print_choice) 
 {
+    std::clock_t begin = std::clock();    
     size_t num_test = test_labels.size();
 
     std::vector<double> test_label_count(NUM_CLASSES, 0);
@@ -213,10 +215,13 @@ double Validator::testPredictor(std::vector<FeatureVec> test_feature_vecs,
 	test_label_freq[i] = test_label_count[i]/num_test;
     }
     accuracy /= num_test;
+    std::clock_t end = std::clock();
+    double elapsed_time = double(end-begin)/CLOCKS_PER_SEC;
 
     // pretty printing
     if (print_choice) {
 	std::cout << "Test data performance: \n\n";
+	printf("Test time (CPU): %0.2fs\n\n", elapsed_time);
 	std::cout << "Number of test samples: " << num_test << "\n\n";
 	std::cout << std::left << std::setw(20) << "CLASS NAME" 
 		  << std::left << std::setw(20) << "CLASS FREQUENCY" 

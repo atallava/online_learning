@@ -15,7 +15,7 @@ bool Test::testVizPCD(std::string file_name)
 
 bool Test::testVizPoints()
 {
-    std::string file_name = "data/oakland_part3_am_rf.node_features";
+    std::string file_name = "data/oakland_part3_an_rf.node_features";
     Dataset d(file_name);
     Visualizer viz;
     viz.visualize(d.points(),d.labels());
@@ -47,7 +47,7 @@ bool Test::validatePredictor(std::string train_file_name, std::string test_file_
 {
     Validator v;
     bool print_choice = true;
-    bool viz_choice = false;
+    bool viz_choice = true;
     double accuracy = v.validate(train_file_name, test_file_name, predictor_type, predictor_param, print_choice,
                                  viz_choice, adjust_for_under_represented_classes, num_training_passes);
     return true;
